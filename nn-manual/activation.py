@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from abc import abstractmethod
 import numpy as np
 from layers import Layer
