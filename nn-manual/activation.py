@@ -42,6 +42,6 @@ class ReLUActivation(ActivationLayer):
         return np.maximum(0, input)
 
     def derivative(self, input):
-        return 1 if input > 0 else 0
+        return np.where(input > 0, 1, 0)
 
     

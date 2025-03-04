@@ -17,7 +17,10 @@ class NeuralNetwork:
                  metric:callable = mse):
         self.epochs = epochs
         self.batch_size = batch_size
-        self.optimizer = Optimizer(learning_rate=learning_rate, momentum= momentum)
+        if optimizer is None:
+            self.optimizer = Optimizer(learning_rate=learning_rate, momentum= momentum)
+        else:
+            self.optimizer = optimizer
         self.verbose = verbose
         self.loss = loss()
         self.metric = metric
@@ -111,25 +114,33 @@ class NeuralNetwork:
 
 
 if __name__ == '__main__':
-    from activation import SigmoidActivation
+    from losses import BinaryCrossEntropy
+    from activation import SigmoidActivation, ReLUActivation
     from metrics import mse, accuracy
     from data import read_csv
+    from optimizer import Optimizer,AdamOptimizer
 
     # training data
-    dataset = read_csv('encoded_words.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
 
+    print("Done reading!")
     # network
-    net = NeuralNetwork(epochs=1000, batch_size=16, learning_rate=0.1, verbose=True,
-                        loss=MeanSquaredError, metric=accuracy)
-    n_features = dataset.X.shape[1]
+    net = NeuralNetwork(epochs=3, batch_size=16, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=AdamOptimizer(learning_rate=0.1))
+    n_features = dataset_train.X.shape[1]
     net.add(DenseLayer(6, (n_features,)))
-    net.add(SigmoidActivation())
+    net.add(ReLUActivation())
+
+    net.add(DenseLayer(3))
+    net.add(ReLUActivation())
+
     net.add(DenseLayer(1))
     net.add(SigmoidActivation())
 
     # train
-    net.fit(dataset)
+    net.fit(dataset_train)
 
     # test
-    out = net.predict(dataset)
-    print(net.score(dataset, out))
+    out = net.predict(dataset_test)
+    print(net.score(dataset_test, out))
