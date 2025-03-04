@@ -126,13 +126,10 @@ if __name__ == '__main__':
 
     print("Done reading!")
     # network
-    net = NeuralNetwork(epochs=3, batch_size=16, verbose=True,
+    net = NeuralNetwork(epochs=50, batch_size=30, verbose=True,
                         loss=BinaryCrossEntropy, metric=accuracy, optimizer=AdamOptimizer(learning_rate=0.1))
     n_features = dataset_train.X.shape[1]
     net.add(DenseLayer(6, (n_features,)))
-    net.add(ReLUActivation())
-
-    net.add(DenseLayer(3))
     net.add(ReLUActivation())
 
     net.add(DenseLayer(1))
@@ -144,3 +141,8 @@ if __name__ == '__main__':
     # test
     out = net.predict(dataset_test)
     print(net.score(dataset_test, out))
+
+    # validation
+    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
+    val = net.predict(dataset_val)
+    print(net.score(dataset_val, val))

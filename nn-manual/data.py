@@ -63,6 +63,13 @@ class Data:
         }
         return pd.DataFrame.from_dict(data, orient="index", columns=self.features)
 
+    def head(self, n=5):
+        """
+        Returns a new Data object containing the first n rows.
+        """
+        X_head = self.X[:n]
+        y_head = self.y[:n] if self.has_label() else None
+        return Data(X=X_head, y=y_head, features=self.features, label=self.label)
 
 def read_csv(filename,
              sep = ',',         # Separador usado no CSV
