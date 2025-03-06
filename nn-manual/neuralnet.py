@@ -33,8 +33,7 @@ class NeuralNetwork:
         if self.layers:
             layer.set_input_shape(input_shape=self.layers[-1].output_shape())
         if hasattr(layer, 'initialize'):
-            #layer.initialize(self.optimizer)
-            layer.initialize2(self.optimizer) # tentativa de melhoria
+            layer.initialize(self.optimizer) 
         self.layers.append(layer)
         return self
 
@@ -127,28 +126,31 @@ if __name__ == '__main__':
 
     print("Done reading!")
     # network
-    net = NeuralNetwork(epochs=30, batch_size=30, verbose=True,
+    net = NeuralNetwork(epochs=10, batch_size=30, verbose=True,
                         loss=BinaryCrossEntropy, metric=accuracy, optimizer=AdamOptimizer(learning_rate=0.01))
     n_features = dataset_train.X.shape[1]
     net.add(DenseLayer(6, (n_features,)))
     net.add(ReLUActivation())
 
-    net.add(DropoutLayer(rate=0.5))
+    net.add(DropoutLayer(dropout_rate=0.5))
 
-    net.add(DenseLayer(1, l2_lambda=0.01))
+    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01))
     net.add(SigmoidActivation())
     #net.add(ReLUActivation())
 
-    net.add(DropoutLayer(rate=0.5))
+    #net.add(DropoutLayer(droupout_rate=0.1))
 
     # train
     net.fit(dataset_train)
 
     # test
     out = net.predict(dataset_test)
-    print(net.score(dataset_test, out))
+    print(f"Test: {net.score(dataset_test, out)}")
+    # write predictions on file
+    np.savetxt('../predictions.csv', out, delimiter=',')
 
     # validation
     dataset_val = read_csv('../validation.csv', sep=',', features=True, label=True)
     val = net.predict(dataset_val)
     print(net.score(dataset_val, val))
+    print(f"Validation: {net.score(dataset_val, val)}")
