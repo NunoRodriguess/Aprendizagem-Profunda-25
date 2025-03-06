@@ -35,15 +35,18 @@ class Layer(metaclass=ABCMeta):
 
 class DenseLayer (Layer):
     
-    def __init__(self, n_units, input_shape = None):
+    def __init__(self, n_units, input_shape = None, l2_lambda = 0.0): # adicionei l2_lambda pro back_propagation
         super().__init__()
         self.n_units = n_units
         self._input_shape = input_shape
+
+        self.l2_lambda = l2_lambda  # Coeficiente de regularização L2
 
         self.input = None
         self.output = None
         self.weights = None
         self.biases = None
+
         
     def initialize(self, optimizer):
         # initialize weights from a 0 centered uniform distribution [-0.5, 0.5)
@@ -53,6 +56,23 @@ class DenseLayer (Layer):
         self.w_opt = copy.deepcopy(optimizer)
         self.b_opt = copy.deepcopy(optimizer)
         return self
+    
+    # tentativa de melhoria da inicialização dos pesos
+    def initialize2(self, optimizer, init_fun=0): # init_fun = 0 -> relu; init_fun = 1 -> sigmoid
+
+        if init_fun == 0:
+            limit = np.sqrt(2 / self.input_shape()[0])  # He initialization
+            self.weights = np.random.normal(0, limit, (self.input_shape()[0], self.n_units))
+        
+        else:
+            limit = np.sqrt(6 / (self.input_shape()[0] + self.n_units))  # Xavier/Glorot initialization
+            self.weights = np.random.uniform(-limit, limit, (self.input_shape()[0], self.n_units))
+
+        self.biases = np.zeros((1, self.n_units))
+        self.w_opt = copy.deepcopy(optimizer)
+        self.b_opt = copy.deepcopy(optimizer)
+        return self
+
     
     def parameters(self):
         return np.prod(self.weights.shape) + np.prod(self.biases.shape)
@@ -67,14 +87,45 @@ class DenseLayer (Layer):
         weights_error = np.dot(self.input.T, output_error)  # dE/dW
         bias_error = np.sum(output_error, axis=0, keepdims=True)  # dE/dB
 
+        # tentativa de regularização L2
+        if self.l2_lambda > 0: 
+            weights_error += self.l2_lambda * self.weights
+
         # Update parameters
         self.weights = self.w_opt.update(self.weights, weights_error)
         self.biases = self.b_opt.update(self.biases, bias_error)
 
         return input_error
-
  
     def output_shape(self):
          return (self.n_units,) 
+    
 
+class DropoutLayer(Layer):
+
+    def __init__(self, rate):
+        super().__init__()
+        self.rate = rate # taxa de droupout
+        self.mask = None
+
+    def forward_propagation(self, input, training=True):
+        
+        if training:
+            # random mask
+            self.mask = np.random.binomial(1, 1 - self.rate, size=input.shape) / (1 - self.rate)
+            return input * self.mask
+        
+        else:
+            return input
+
+    def backward_propagation(self, output_error):
+        return output_error * self.mask
+
+
+    def output_shape(self):
+        return self.input_shape()
+    
+    # precisa da função definida pra nao dar erro
+    def parameters(self):
+        return 0 # dropout não tem parâmetros treináveis, então retorna 0.
     

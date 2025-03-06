@@ -29,6 +29,7 @@ class ActivationLayer(Layer):
 class SigmoidActivation(ActivationLayer):
 
     def activation_function(self, input):
+        input = np.clip(input, -500, 500) # anti overflows
         return 1 / (1 + np.exp(-input))
 
     def derivative(self, input):
