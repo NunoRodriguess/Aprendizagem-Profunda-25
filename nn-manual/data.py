@@ -70,6 +70,9 @@ class Data:
         X_head = self.X[:n]
         y_head = self.y[:n] if self.has_label() else None
         return Data(X=X_head, y=y_head, features=self.features, label=self.label)
+    
+    def get_y(self):
+        return self.y
 
 def read_csv(filename,
              sep = ',',         # Separador usado no CSV

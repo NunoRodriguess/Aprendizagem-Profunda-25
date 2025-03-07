@@ -145,3 +145,61 @@ class DropoutLayer(Layer):
     
     def output_shape(self):     
         return self.input_shape()
+
+class EmbeddingLayer(Layer):
+    def __init__(self, vocab_size, embedding_dim, embedding_matrix=None, trainable=True):
+        super().__init__()
+        self.vocab_size = vocab_size
+        self.embedding_dim = embedding_dim
+        self.trainable = trainable
+        self.w_opt = None
+
+        # Initialize embedding weights
+        if embedding_matrix is not None:
+            self.weights = embedding_matrix  # Pre-trained GloVe embeddings
+        else:
+            self.weights = np.random.normal(scale=0.6, size=(vocab_size, embedding_dim))
+    
+    def initialize(self, optimizer):
+        self.w_opt = copy.deepcopy(optimizer)
+        return self
+    
+    def parameters(self):
+        return np.prod(self.weights.shape) 
+
+    def forward_propagation(self, inputs, training=True):
+        self.input = inputs
+        batch_size = inputs.shape[0]
+        
+        # Handle both one-hot encoded vectors and indices
+        if len(inputs.shape) > 1 and inputs.shape[1] > 1 and np.sum(inputs) > batch_size:
+            # This is likely one-hot encoded input
+            self.input_indices = np.argmax(inputs, axis=1)
+        else:
+            # This is likely already indices
+            self.input_indices = inputs.flatten().astype(int)
+            
+        # Get embeddings for these indices - output should be (batch_size, embedding_dim)
+        self.output = self.weights[self.input_indices]
+        return self.output
+        
+    def backward_propagation(self, output_error):
+        if self.trainable:
+            # Create a gradient matrix for embeddings
+            weights_error = np.zeros_like(self.weights)
+            
+            # Accumulate gradients for each used embedding
+            for i, idx in enumerate(self.input_indices):
+                weights_error[idx] += output_error[i]
+            
+            # Update embeddings with optimizer
+            if self.w_opt:
+                self.weights = self.w_opt.update(self.weights, weights_error)
+            
+        # For backward compatibility, return error matrix with same shape as input
+        return np.zeros_like(self.input)
+    
+    def output_shape(self):
+        # The output shape will be (embedding_dim,) since we're outputting
+        # one embedding vector per input sample
+        return (self.embedding_dim,)
