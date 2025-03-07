@@ -133,8 +133,8 @@ if __name__ == '__main__':
 
     set_seed(25)
     # training data
-    dataset_train = read_csv('../train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('../test.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
 
     print("Done reading!")
     # network
@@ -143,12 +143,12 @@ if __name__ == '__main__':
                         loss=BinaryCrossEntropy, metric=accuracy, learning_rate=0.1)
 
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(20, (n_features,)))
+    net.add(DenseLayer(20, (n_features,),init_weights="xavier"))
     net.add(ReLUActivation())
 
     net.add(DropoutLayer(dropout_rate=0.5))
 
-    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01))
+    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01,init_weights="xavier"))
     net.add(SigmoidActivation())
     #net.add(ReLUActivation())
 
@@ -161,10 +161,10 @@ if __name__ == '__main__':
     out = net.predict(dataset_test)
     print(f"Test: {net.score(dataset_test, out)}")
     # write predictions on file
-    np.savetxt('../predictions.csv', out, delimiter=',')
+    np.savetxt('predictions.csv', out, delimiter=',')
 
     # validation
-    dataset_val = read_csv('../validation.csv', sep=',', features=True, label=True)
+    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
     val = net.predict(dataset_val)
     print(net.score(dataset_val, val))
     print(f"Validation: {net.score(dataset_val, val)}")

@@ -35,10 +35,11 @@ class Layer(metaclass=ABCMeta):
 
 class DenseLayer (Layer):
     
-    def __init__(self, n_units, input_shape = None, l1_lambda = 0.0, l2_lambda = 0.0): 
+    def __init__(self, n_units, input_shape = None, l1_lambda = 0.0, l2_lambda = 0.0,init_weights="he"): 
         super().__init__()
         self.n_units = n_units
         self._input_shape = input_shape
+        self.init_weights = init_weights
 
         self.l1_lambda = l1_lambda  # Coeficiente de regularização L1
         self.l2_lambda = l2_lambda  # Coeficiente de regularização L2
@@ -49,14 +50,14 @@ class DenseLayer (Layer):
         self.biases = None
 
 
-    def initialize(self, optimizer, init_fun="relu"): # init_fun = "relu" ou "sigmoid"
+    def initialize(self, optimizer): # init_weights = "he" ou "xavier"
         # otimizacao de pesos iniciais
 
-        if init_fun == "relu":
+        if self.init_weights == "he":
             limit = np.sqrt(2 / self.input_shape()[0])  # He initialization
             self.weights = np.random.normal(0, limit, (self.input_shape()[0], self.n_units))
         
-        elif init_fun == "sigmoid":
+        elif self.init_weights == "xavier":
             limit = np.sqrt(6 / (self.input_shape()[0] + self.n_units))  # Xavier/Glorot initialization
             self.weights = np.random.uniform(-limit, limit, (self.input_shape()[0], self.n_units))
         
