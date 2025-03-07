@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from layers import DenseLayer
+from layers import DenseLayer, DropoutLayer
 from losses import LossFunction, MeanSquaredError
 from optimizer import Optimizer
 from metrics import mse
@@ -40,7 +40,7 @@ class NeuralNetwork:
         if self.layers:
             layer.set_input_shape(input_shape=self.layers[-1].output_shape())
         if hasattr(layer, 'initialize'):
-            layer.initialize(self.optimizer)
+            layer.initialize(self.optimizer) 
         self.layers.append(layer)
         return self
 
@@ -133,31 +133,38 @@ if __name__ == '__main__':
 
     set_seed(25)
     # training data
-    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('../train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('../test.csv', sep=',', features=True, label=True)
 
     print("Done reading!")
     # network
+
     net = NeuralNetwork(epochs=20, batch_size=16, verbose=True,
                         loss=BinaryCrossEntropy, metric=accuracy, learning_rate=0.1)
+
     n_features = dataset_train.X.shape[1]
     net.add(DenseLayer(20, (n_features,)))
     net.add(ReLUActivation())
 
-    net.add(DenseLayer(1))
+    net.add(DropoutLayer(dropout_rate=0.5))
+
+    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01))
     net.add(SigmoidActivation())
+    #net.add(ReLUActivation())
+
+    #net.add(DropoutLayer(droupout_rate=0.1))
 
     # train
     net.fit(dataset_train)
 
     # test
-    out = net.predict(dataset_test, binary=True)
-    print(net.score(dataset_test, out))
+    out = net.predict(dataset_test)
+    print(f"Test: {net.score(dataset_test, out)}")
     # write predictions on file
-    np.savetxt('predictions.csv', out, delimiter=',')
+    np.savetxt('../predictions.csv', out, delimiter=',')
 
     # validation
-    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
-    val = net.predict(dataset_val,binary=True)
+    dataset_val = read_csv('../validation.csv', sep=',', features=True, label=True)
+    val = net.predict(dataset_val)
     print(net.score(dataset_val, val))
-    np.savetxt('predictions_val.csv', val, delimiter=',')
+    print(f"Validation: {net.score(dataset_val, val)}")
