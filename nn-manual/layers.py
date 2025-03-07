@@ -49,16 +49,20 @@ class DenseLayer (Layer):
         self.biases = None
 
 
-    def initialize(self, optimizer, init_fun=0): # init_fun = 0 -> relu; init_fun = 1 -> sigmoid
+    def initialize(self, optimizer, init_fun="relu"): # init_fun = "relu" ou "sigmoid"
         # otimizacao de pesos iniciais
 
-        if init_fun == 0:
+        if init_fun == "relu":
             limit = np.sqrt(2 / self.input_shape()[0])  # He initialization
             self.weights = np.random.normal(0, limit, (self.input_shape()[0], self.n_units))
         
-        else:
+        elif init_fun == "sigmoid":
             limit = np.sqrt(6 / (self.input_shape()[0] + self.n_units))  # Xavier/Glorot initialization
             self.weights = np.random.uniform(-limit, limit, (self.input_shape()[0], self.n_units))
+        
+        else:
+            print("Função de ativação passada, errada!")
+            raise ValueError
 
         self.biases = np.zeros((1, self.n_units))
         self.w_opt = copy.deepcopy(optimizer)
