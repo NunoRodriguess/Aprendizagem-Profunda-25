@@ -8,7 +8,7 @@ from losses import BinaryCrossEntropy
 from activation import SigmoidActivation, ReLUActivation
 from metrics import mse, accuracy
 from data import read_csv
-from optimizer import Optimizer,AdamOptimizer
+from optimizer import Optimizer,AdamOptimizer, RMSPropOptimizer
 from neuralnet import NeuralNetwork
 import numpy as np
 import os
@@ -29,16 +29,14 @@ if __name__ == '__main__':
     print("Done reading!")
     # network
 
-    net = NeuralNetwork(epochs=20, batch_size=16, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, learning_rate=0.1)
+    net = NeuralNetwork(epochs=100, batch_size=16, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.1))
 
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(20, (n_features,),init_weights="xavier"))
+    net.add(DenseLayer(6, (n_features,),init_weights="xavier"))
     net.add(ReLUActivation())
 
-    net.add(DropoutLayer(dropout_rate=0.5))
-
-    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01,init_weights="xavier"))
+    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01,init_weights="he"))
     net.add(SigmoidActivation())
     #net.add(ReLUActivation())
 
@@ -68,3 +66,25 @@ if __name__ == '__main__':
 
     # Print validation accuracy
     print(f"Validation accuracy: {net.score(dataset_val, val)}")
+
+    # Predict com dados do stor!
+    dataset_stor = read_csv('input_prof.csv', sep=',', features=True, label=False)
+
+    binary_conv = {0: "Human", 1: "AI"}
+
+    # Get predictions
+    out = net.predict(dataset_stor, binary=True)
+
+    # Convert numerical predictions to labels
+    out_labels = np.vectorize(binary_conv.get)(out)
+
+    # Create row IDs (D1-1, D1-2, ..., D1-N)
+    num_samples = len(out_labels)
+    ids = [f"D1-{i+1}" for i in range(num_samples)]
+
+    # Stack IDs and labels into a single 2D array
+    output_array = np.column_stack((ids, out_labels))
+
+    # Save to file with header
+    np.savetxt('dataset1_outputs1_grupo.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')
+
