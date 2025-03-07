@@ -1,1 +1,7 @@
 human_or_ai_dataset.csv
+*.csv
+nn-manual/__pycache__
+.DS_Store
+nn-manual/test.csv
+nn-manual/validation.csv
+nn-manual/train.csv

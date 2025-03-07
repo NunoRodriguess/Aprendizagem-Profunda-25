@@ -8,6 +8,13 @@ from losses import LossFunction, MeanSquaredError
 from optimizer import Optimizer
 from metrics import mse
 
+import os
+import random
+def set_seed(seed: int):
+    random.seed(seed) # Python
+    np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
+    os.environ["PYTHONHASHSEED"] = str(seed)  # sistema operativo
+
 
 class NeuralNetwork:
  
@@ -103,8 +110,12 @@ class NeuralNetwork:
 
         return self
 
-    def predict(self, dataset):
-        return self.forward_propagation(dataset.X, training=False)
+    def predict(self, dataset, binary=False):
+        out = self.forward_propagation(dataset.X, training=False)
+        if binary:
+            return np.where(out >= 0.5, 1, 0)
+        else:
+            return out
 
     def score(self, dataset, predictions):
         if self.metric is not None:
@@ -120,16 +131,19 @@ if __name__ == '__main__':
     from data import read_csv
     from optimizer import Optimizer,AdamOptimizer
 
+    set_seed(25)
     # training data
     dataset_train = read_csv('../train.csv', sep=',', features=True, label=True)
     dataset_test = read_csv('../test.csv', sep=',', features=True, label=True)
 
     print("Done reading!")
     # network
-    net = NeuralNetwork(epochs=10, batch_size=30, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=AdamOptimizer(learning_rate=0.01))
+
+    net = NeuralNetwork(epochs=20, batch_size=16, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, learning_rate=0.1)
+
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(6, (n_features,)))
+    net.add(DenseLayer(20, (n_features,)))
     net.add(ReLUActivation())
 
     net.add(DropoutLayer(dropout_rate=0.5))
