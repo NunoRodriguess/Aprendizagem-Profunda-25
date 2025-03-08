@@ -1,6 +1,7 @@
 human_or_ai_dataset.csv
 *.csv
 nn-manual/__pycache__
+reg_logistica/__pycache__
 .DS_Store
 nn-manual/test.csv
 nn-manual/validation.csv

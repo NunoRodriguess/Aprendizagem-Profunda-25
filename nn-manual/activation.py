@@ -46,3 +46,10 @@ class ReLUActivation(ActivationLayer):
         return np.where(input > 0, 1, 0)
 
     
+class TanhActivation(ActivationLayer):
+    
+    def activation_function(self, input):
+        return np.tanh(input)
+    
+    def derivative(self, input):
+        return 1 - np.tanh(input) ** 2
