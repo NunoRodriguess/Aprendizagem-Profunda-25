@@ -27,3 +27,55 @@ def mse(y_true, y_pred):
 
 def mse_derivative(y_true, y_pred):
     return 2 * np.sum(y_true - y_pred) / len(y_true)
+
+def precision_recall_f1(y_true, y_pred):
+
+    unique_classes = np.unique(y_true)  # Get all unique class labels
+    precisions, recalls, f1_scores = [], [], []
+
+    for cls in unique_classes:
+        tp = np.sum((y_pred == cls) & (y_true == cls))  # True Positives
+        fp = np.sum((y_pred == cls) & (y_true != cls))  # False Positives
+        fn = np.sum((y_pred != cls) & (y_true == cls))  # False Negatives
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+
+        precisions.append(precision)
+        recalls.append(recall)
+        f1_scores.append(f1)
+
+    macro_f1 = np.mean(f1_scores)
+    return macro_f1
+
+def recall(y_true, y_pred):
+
+    unique_classes = np.unique(y_true)  # Get all unique class labels
+    recalls = []
+
+    for cls in unique_classes:
+        tp = np.sum((y_pred == cls) & (y_true == cls))  # True Positives
+        fp = np.sum((y_pred == cls) & (y_true != cls))  # False Positives
+        fn = np.sum((y_pred != cls) & (y_true == cls))  # False Negatives
+
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        recalls.append(recall)
+
+    return np.mean(recalls)
+
+
+def precision(y_true, y_pred):
+
+    unique_classes = np.unique(y_true)  # Get all unique class labels
+    precisions = []
+
+    for cls in unique_classes:
+        tp = np.sum((y_pred == cls) & (y_true == cls))  # True Positives
+        fp = np.sum((y_pred == cls) & (y_true != cls))  # False Positives
+        fn = np.sum((y_pred != cls) & (y_true == cls))  # False Negatives
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        precisions.append(precision)
+
+    return np.mean(precisions)

@@ -21,7 +21,8 @@ class NeuralNetwork:
     def __init__(self, epochs = 100, batch_size = 128, optimizer = None,
                  learning_rate = 0.01, momentum = 0.90, verbose = False, 
                  loss = MeanSquaredError,
-                 metric:callable = mse):
+                 metric:callable = mse,
+                 callbacks=None):
         self.epochs = epochs
         self.batch_size = batch_size
         if optimizer is None:
@@ -31,6 +32,7 @@ class NeuralNetwork:
         self.verbose = verbose
         self.loss = loss()
         self.metric = metric
+        self.callbacks = callbacks if callbacks is not None else []
 
         # attributes
         self.layers = []
@@ -107,6 +109,15 @@ class NeuralNetwork:
 
             if self.verbose:
                 print(f"Epoch {epoch}/{self.epochs} - loss: {loss:.4f} - {metric_s}")
+            
+            # Execute callbacks at the end of the epoch
+            for callback in self.callbacks:
+                if hasattr(callback, 'on_epoch_end'):
+                    stop_training = callback.on_epoch_end(epoch, self.history, self)
+                    if stop_training:
+                        if self.verbose:
+                            print(f"Training stopped at epoch {epoch}")
+                        return self
 
         return self
 

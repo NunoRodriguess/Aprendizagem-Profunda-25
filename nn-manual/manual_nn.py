@@ -3,13 +3,13 @@ import numpy as np
 from layers import DenseLayer, DropoutLayer
 from losses import LossFunction, MeanSquaredError
 from optimizer import Optimizer
-from metrics import mse
 from losses import BinaryCrossEntropy
 from activation import SigmoidActivation, ReLUActivation
-from metrics import mse, accuracy
+from metrics import mse, accuracy, precision_recall_f1
 from data import read_csv
 from optimizer import Optimizer,AdamOptimizer, RMSPropOptimizer
 from neuralnet import NeuralNetwork
+from callback import EarlyStopping
 import numpy as np
 import os
 import random
@@ -28,15 +28,34 @@ if __name__ == '__main__':
 
     print("Done reading!")
     # network
+    
+    early_stopping = EarlyStopping(
+        monitor='metric',  # Monitor validation metric or loss
+        min_delta=0.0001,       # Minimum change to qualify as improvement
+        patience=20,           # Stop after 10 epochs without improvement
+        verbose=True,          # Print messages
+        mode='max',            # We want metric to increase (for accuracy)
+        restore_best_weights=True  # Restore to best weights when stopped
+    )
 
-    net = NeuralNetwork(epochs=100, batch_size=16, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.1))
+    net = NeuralNetwork(epochs=500, batch_size=32, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.1,beta=0.99),callbacks=[early_stopping])
 
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(6, (n_features,),init_weights="xavier"))
+    net.add(DenseLayer(50, (n_features,),init_weights="xavier"))
     net.add(ReLUActivation())
 
-    net.add(DenseLayer(1, l1_lambda=0.01, l2_lambda=0.01,init_weights="he"))
+    net.add(DropoutLayer(dropout_rate=0.6))
+
+    net.add(DenseLayer(20,init_weights="xavier"))
+    net.add(ReLUActivation())
+
+    net.add(DropoutLayer(dropout_rate=0.5))
+
+    net.add(DenseLayer(6,init_weights="xavier"))
+    net.add(ReLUActivation())
+
+    net.add(DenseLayer(1,init_weights="he"))
     net.add(SigmoidActivation())
     #net.add(ReLUActivation())
 
