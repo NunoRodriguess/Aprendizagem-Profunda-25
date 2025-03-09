@@ -54,7 +54,7 @@ def features_to_word_index(vocab):
 def convert_onehot_to_indices(onehot_matrix):
     return np.argmax(onehot_matrix, axis=1)
 
-def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100):
+def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100, oov_strategy="random"):
     """ Load GloVe vectors and create an embedding matrix """
     embeddings_index = {}
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -71,6 +71,16 @@ def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100):
         if word in embeddings_index:
             embedding_matrix[i] = embeddings_index[word]
         else:
-            embedding_matrix[i] = np.random.normal(scale=0.6, size=(embedding_dim,))
+            if oov_strategy == "random":
+                embedding_matrix[i] = np.random.normal(scale=0.6, size=(embedding_dim,))  # Random init
+            
+            elif oov_strategy == "mean":
+                embedding_matrix[i] = mean_embedding
+
+            elif oov_strategy == "zero":
+                embedding_matrix[i] = np.zeros((embedding_dim,))
+            
+            else:
+                raise ValueError("Estrategia de OOV escolhida invalida.")
     
     return embedding_matrix
