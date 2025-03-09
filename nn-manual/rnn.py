@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 def set_seed(seed: int):
     random.seed(seed) # Python
     np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
@@ -8,7 +9,6 @@ def set_seed(seed: int):
 
 from copy import deepcopy
 from typing import Tuple
-import numpy as np
 
 from activation import SigmoidActivation,TanhActivation,ReLUActivation  # Ensure this is defined in your activation module
 from layers import Layer, DenseLayer
@@ -32,7 +32,7 @@ class RNN(Layer):
         self.V = None  # Output weights
     
     def initialize(self, optimizer):
-        batch_size, timesteps, input_dim = self.input_shape()
+        _, timesteps, input_dim = self.input_shape()
         limit = 1 / np.sqrt(input_dim)
         self.U = np.random.uniform(-limit, limit, (self.n_units, input_dim))
         limit = 1 / np.sqrt(self.n_units)
@@ -43,7 +43,7 @@ class RNN(Layer):
         self.W_opt = deepcopy(optimizer)
         self.V_opt = deepcopy(optimizer)
     
-    def forward_propagation(self, inputs, training=True):
+    def forward_propagation(self, inputs: np.ndarray, training=True) -> np.ndarray:
         batch_size, timesteps, input_dim = inputs.shape
         self.layer_input = inputs
         
@@ -75,7 +75,7 @@ class RNN(Layer):
             grad_wrt_state = accum_grad[:, t].dot(self.V.T) * self.activation.derivative(self.state_input[:, t])
             accum_grad_next[:, t] = grad_wrt_state.dot(self.U)
             
-            for t_ in reversed(range(max(0, t - self.bptt_trunc), t + 1)):
+            for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t + 1)):
                 grad_U += grad_wrt_state.T.dot(self.layer_input[:, t_])
                 grad_W += grad_wrt_state.T.dot(self.states[:, t_ - 1])
                 grad_wrt_state = grad_wrt_state.dot(self.W.T) * self.activation.derivative(self.state_input[:, t_ - 1])
@@ -89,7 +89,7 @@ class RNN(Layer):
     def output_shape(self):
         batch_size, timesteps, _ = self.input_shape()
         if self.return_sequences:
-            return (batch_size, timesteps, self.n_units)
+            return (batch_size, timesteps, self.n_units) # batch_size, timesteps, dimensionality
         else:
             return (self.n_units,)
     
