@@ -1,5 +1,7 @@
 import os
 import random
+import numpy as np
+
 def set_seed(seed: int):
     random.seed(seed) # Python
     np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
@@ -15,13 +17,12 @@ if __name__ == '__main__':
     from data import read_csv,Data
     from optimizer import Optimizer,AdamOptimizer
     from embedding import load_glove_embeddings, create_embedding_matrix, features_to_word_index, convert_onehot_to_indices
-    import numpy as np
 
     set_seed(25)
     # training data
-    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
-    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('../train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('../test.csv', sep=',', features=True, label=True)
+    dataset_val = read_csv('../validation.csv', sep=',', features=True, label=True)
 
     print("Done reading!")
 
@@ -30,11 +31,11 @@ if __name__ == '__main__':
     vocab_size = len(word_index) + 1  # +1 for padding or unknown words
 
     # Load GloVe embeddings
-    glove_path = 'nn-manual/glove.6B.100d.txt'
+    glove_path = 'glove.6B.100d.txt'
     embeddings_index = load_glove_embeddings(glove_path, embedding_dim=100)
 
     # Create embedding matrix
-    embedding_matrix = create_embedding_matrix(word_index, embeddings_index, embedding_dim=100)
+    embedding_matrix = create_embedding_matrix(word_index, embeddings_index, oov_strategy="mean", normalize=True, embedding_dim=100)
     print(f"Created embedding matrix with shape: {embedding_matrix.shape}")
 
     # Create neural network
