@@ -29,3 +29,24 @@ def features_to_word_index(vocab):
 
 def convert_onehot_to_indices(onehot_matrix):
     return np.argmax(onehot_matrix, axis=1)
+
+def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100):
+    """ Load GloVe vectors and create an embedding matrix """
+    embeddings_index = {}
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            values = line.split()
+            word = values[0]
+            vector = np.asarray(values[1:], dtype='float32')
+            embeddings_index[word] = vector
+    
+    vocab_size = len(word_index) + 1
+    embedding_matrix = np.zeros((vocab_size, embedding_dim))
+    
+    for word, i in word_index.items():
+        if word in embeddings_index:
+            embedding_matrix[i] = embeddings_index[word]
+        else:
+            embedding_matrix[i] = np.random.normal(scale=0.6, size=(embedding_dim,))
+    
+    return embedding_matrix

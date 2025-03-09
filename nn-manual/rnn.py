@@ -1,3 +1,11 @@
+import os
+import random
+def set_seed(seed: int):
+    random.seed(seed) # Python
+    np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
+    os.environ["PYTHONHASHSEED"] = str(seed)  # sistema operativo
+
+
 from copy import deepcopy
 from typing import Tuple
 import numpy as np
@@ -10,87 +18,82 @@ from metrics import mse,accuracy,precision_recall_f1,recall,precision
 from callback import EarlyStopping
 
 class RNN(Layer):
-    """A Vanilla Fully-Connected Recurrent Neural Network layer."""
-
-    def __init__(self, n_units: int, input_shape: Tuple = None, bptt_trunc: int = 5, return_sequences: bool = False,activation=None):
+    def __init__(self, n_units, input_shape=None, bptt_trunc=5, return_sequences=False, activation=None):
         super().__init__()
         self.n_units = n_units
         self.bptt_trunc = bptt_trunc
-        self._input_shape = input_shape
         self.return_sequences = return_sequences
-
-        if activation is None:
-            self.activation = TanhActivation()
-        else:
-            self.activation = activation
-
-        self.W = None  # Recurrent weight
-        self.V = None  # Output weight
-        self.U = None  # Input weight
-
+        self._input_shape = input_shape
+        
+        self.activation = activation if activation else TanhActivation()
+        
+        self.U = None  # Input weights
+        self.W = None  # Recurrent weights
+        self.V = None  # Output weights
+    
     def initialize(self, optimizer):
-        """Initializes the weights of the layer."""
-        timesteps, input_dim = self.input_shape()
+        batch_size, timesteps, input_dim = self.input_shape()
         limit = 1 / np.sqrt(input_dim)
         self.U = np.random.uniform(-limit, limit, (self.n_units, input_dim))
         limit = 1 / np.sqrt(self.n_units)
-        self.V = np.random.uniform(-limit, limit, (self.n_units, self.n_units))
         self.W = np.random.uniform(-limit, limit, (self.n_units, self.n_units))
+        self.V = np.random.uniform(-limit, limit, (self.n_units, self.n_units))
         
-        # Optimizers for each weight
         self.U_opt = deepcopy(optimizer)
-        self.V_opt = deepcopy(optimizer)
         self.W_opt = deepcopy(optimizer)
-
-    def forward_propagation(self, inputs: np.ndarray, training: bool = True) -> np.ndarray:
+        self.V_opt = deepcopy(optimizer)
+    
+    def forward_propagation(self, inputs, training=True):
         batch_size, timesteps, input_dim = inputs.shape
         self.layer_input = inputs
-
+        
         self.state_input = np.zeros((batch_size, timesteps, self.n_units))
         self.states = np.zeros((batch_size, timesteps + 1, self.n_units))
         self.outputs = np.zeros((batch_size, timesteps, self.n_units))
-
+        
         for t in range(timesteps):
             self.state_input[:, t] = inputs[:, t].dot(self.U.T) + self.states[:, t - 1].dot(self.W.T)
             self.states[:, t] = self.activation.activation_function(self.state_input[:, t])
             self.outputs[:, t] = self.states[:, t].dot(self.V.T)
         
         return self.outputs if self.return_sequences else self.outputs[:, -1, :]
-
-    def backward_propagation(self, accum_grad: np.ndarray) -> np.ndarray:
-        batch_size, timesteps, _ = self.layer_input.shape
-
+    
+    def backward_propagation(self, accum_grad):
+      
         grad_U = np.zeros_like(self.U)
-        grad_V = np.zeros_like(self.V)
         grad_W = np.zeros_like(self.W)
+        grad_V = np.zeros_like(self.V)
         accum_grad_next = np.zeros_like(self.layer_input)
-
-        # Ensure correct shape when return_sequences=False
+        
         if not self.return_sequences:
-            accum_grad = np.expand_dims(accum_grad, axis=1)  # Shape (batch_size, 1, n_units)
-
-        timesteps = accum_grad.shape[1]  # Set timesteps based on accum_grad shape
+            accum_grad = np.expand_dims(accum_grad, axis=1)
+        
+        batch_size, timesteps, _ = accum_grad.shape
 
         for t in reversed(range(timesteps)):
             grad_V += accum_grad[:, t].T.dot(self.states[:, t])
             grad_wrt_state = accum_grad[:, t].dot(self.V.T) * self.activation.derivative(self.state_input[:, t])
             accum_grad_next[:, t] = grad_wrt_state.dot(self.U)
             
-            for t_ in reversed(np.arange(max(0, t - self.bptt_trunc), t + 1)):
+            for t_ in reversed(range(max(0, t - self.bptt_trunc), t + 1)):
                 grad_U += grad_wrt_state.T.dot(self.layer_input[:, t_])
                 grad_W += grad_wrt_state.T.dot(self.states[:, t_ - 1])
                 grad_wrt_state = grad_wrt_state.dot(self.W.T) * self.activation.derivative(self.state_input[:, t_ - 1])
-
+        
         self.U = self.U_opt.update(self.U, grad_U)
-        self.V = self.V_opt.update(self.V, grad_V)
         self.W = self.W_opt.update(self.W, grad_W)
-
+        self.V = self.V_opt.update(self.V, grad_V)
+        
         return accum_grad_next
-
-    def output_shape(self) -> tuple:
-        return (self._input_shape[0], self.n_units) if self.return_sequences else (self.n_units,)
-
-    def parameters(self) -> int:
+    
+    def output_shape(self):
+        batch_size, timesteps, _ = self.input_shape()
+        if self.return_sequences:
+            return (batch_size, timesteps, self.n_units)
+        else:
+            return (self.n_units,)
+    
+    def parameters(self):
         return np.prod(self.W.shape) + np.prod(self.U.shape) + np.prod(self.V.shape)
 
 class RecurrentNeuralNetwork:
@@ -185,28 +188,69 @@ class RecurrentNeuralNetwork:
 
 
 if __name__ == '__main__':
-    from data import Data
-    X = np.random.randn(100, 3, 3)
-    y = np.random.randint(0, 2, size=(100, 1))
-    dataset = Data(X, y)
+    from data import Data, read_csv
+    from embedding import load_glove_embeddings_matrix
+    from layers import EmbeddingLayerRNN, DenseLayer
+    from activation import SigmoidActivation, ReLUActivation, TanhActivation
+    from callback import EarlyStopping
+    from losses import BinaryCrossEntropy
+    from metrics import accuracy
+    from neuralnet import NeuralNetwork
+    import json
 
+    set_seed(25)
+
+    # Load word_index
+    with open("word_index.json", "r") as f:
+        word_index = json.load(f)
+
+    # Load dataset
+    dataset = read_csv("validation_emb.csv", sep=",", features=True, label=True)
+
+    print("Dataset Loaded!")
+
+    # Load GloVe embedding matrix
+    from embedding import load_glove_embeddings_matrix
+    embedding_matrix = load_glove_embeddings_matrix("nn-manual/glove.6B.100d.txt", word_index, embedding_dim=100)
+
+    # Define Early Stopping
     early_stopping = EarlyStopping(
-        monitor='metric',  # Monitor validation metric or loss
-        min_delta=0.1,       # Minimum change to qualify as improvement
-        patience=1,           # Stop after 10 epochs without improvement
-        verbose=True,          # Print messages
-        mode='max',            # We want metric to increase (for accuracy)
-        restore_best_weights=True  # Restore to best weights when stopped
+        monitor='metric',  
+        min_delta=0.001,   
+        patience=20,       
+        verbose=True,     
+        mode='max',       
+        restore_best_weights=True
     )
-    
-    model = RecurrentNeuralNetwork(epochs=20, batch_size=3, learning_rate=0.01, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, callbacks=[early_stopping])
-    model.add(RNN(10, input_shape=(3, 3), bptt_trunc=5, return_sequences=True,activation=ReLUActivation()))
-    model.add(RNN(5, bptt_trunc=5, return_sequences=False,activation=TanhActivation()))
+
+    batch = 16
+    # Initialize the RNN model
+    model = RecurrentNeuralNetwork(
+        epochs=10, batch_size=batch, optimizer=AdamOptimizer(learning_rate=0.1),
+        loss=BinaryCrossEntropy, metric=accuracy, callbacks=[early_stopping], verbose=True
+    )
+
+    # Add Embedding Layer
+    vocab_size = len(word_index) + 1  # +1 for padding
+    embedding_dim = 100  
+
+    model.add(EmbeddingLayerRNN(
+        vocab_size=vocab_size,
+        embedding_dim=embedding_dim,
+        embedding_matrix=embedding_matrix,
+        trainable=False,
+        input_shape=(batch,dataset.X.shape[1])
+    ))
+
+    # Add RNN layers
+    model.add(RNN(n_units=6, bptt_trunc=2, return_sequences=False, activation=ReLUActivation()))
     model.add(DenseLayer(1))
     model.add(SigmoidActivation())
-    
-    model.fit(dataset)
-    predictions = model.predict(dataset)
-    #print("Predictions:", predictions)
-    print(f"Predictions accuracy: {model.score(dataset, predictions)}")
+
+    # Train the model
+    dataset_small = dataset.head(500)
+    model.fit(dataset_small)
+
+    # Make predictions
+    predictions = model.predict(dataset_small)
+    print(f"Final Accuracy: {model.score(dataset_small, predictions):.4f}")

@@ -203,3 +203,56 @@ class EmbeddingLayer(Layer):
         # The output shape will be (embedding_dim,) since we're outputting
         # one embedding vector per input sample
         return (self.embedding_dim,)
+
+class EmbeddingLayerRNN(Layer):
+    def __init__(self, vocab_size, embedding_dim, embedding_matrix=None, trainable=False, input_shape=None):
+        super().__init__()
+        self.vocab_size = vocab_size
+        self.embedding_dim = embedding_dim
+        self.trainable = trainable
+        self.w_opt = None
+        self._input_shape = input_shape
+
+        # Initialize weights (embedding matrix)
+        if embedding_matrix is not None:
+            self.weights = embedding_matrix
+        else:
+            self.weights = np.random.normal(scale=0.6, size=(vocab_size, embedding_dim))
+    
+    def initialize(self, optimizer):
+        if self.trainable:
+            self.w_opt = copy.deepcopy(optimizer)
+        return self
+    
+    def forward_propagation(self, inputs, training=True):
+        """
+        Inputs: (batch_size, sequence_length)
+        Outputs: (batch_size, sequence_length, embedding_dim)
+        """
+        self.input = inputs  # Store input for backpropagation
+        batch_size, sequence_length = inputs.shape
+        self.output = self.weights[inputs]  # Efficient indexing for embeddings
+        return self.output
+    
+    def backward_propagation(self, output_error):
+        """
+        Inputs: (batch_size, sequence_length, embedding_dim)
+        """
+        if self.trainable:
+            grad_w = np.zeros_like(self.weights)
+            batch_size, sequence_length, _ = output_error.shape
+            
+            for i in range(batch_size):
+                for t in range(sequence_length):
+                    idx = self.input[i, t]
+                    grad_w[idx] += output_error[i, t]
+            
+            self.weights = self.w_opt.update(self.weights, grad_w)
+        
+        return np.zeros_like(self.input)
+    
+    def output_shape(self):
+        return (self._input_shape[0], self._input_shape[1], self.embedding_dim)
+    
+    def parameters(self):
+        return np.prod(self.weights.shape) if self.trainable else 0
