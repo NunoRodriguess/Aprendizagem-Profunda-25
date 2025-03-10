@@ -34,15 +34,28 @@ class LogisticRegression:
         else:
             self.optim_model()
 
-    def gradientDescent(self, alpha = 0.01, iters = 10000):
-        m = self.X.shape[0]
-        n = self.X.shape[1]
+    def gradientDescent(self, alpha=0.01, iters=100, tol=1e-5):
+        m = self.X.shape[0]  
+        n = self.X.shape[1]  
         self.theta = np.zeros(n)  
+        prev_cost = float('inf')  
+
         for its in range(iters):
-            J = self.costFunction()
-            if its%1000 == 0: print(J)
-            delta = self.X.T.dot(sigmoid(self.X.dot(self.theta)) - self.y)                      
-            self.theta -= (alpha /m  * delta )    
+            J = self.costFunction()  
+            if its % 1000 == 0: 
+                print(f"Iteration {its}: Cost = {J}")  
+
+            # Verifica a convergência
+            if abs(prev_cost - J) < tol:
+                print(f"Converged at iteration {its} with cost {J}")
+                break
+            prev_cost = J  # Atualiza o custo anterior
+
+            # Calcula o gradiente
+            delta = self.X.T.dot(sigmoid(self.X.dot(self.theta)) - self.y)
+            # Atualiza os parâmetros
+            self.theta -= (alpha / m) * delta
+            
     
     def optim_model(self):
         from scipy import optimize
@@ -85,21 +98,23 @@ class LogisticRegression:
         if theta is None: theta= self.theta        
         m = self.X.shape[0]
         p = sigmoid ( np.dot(self.X, theta) )
+        eps = 1e-15  # Clipping to avoid log(0)
+        p = np.clip(p, eps, 1 - eps)
         cost  = (-self.y * np.log(p) - (1-self.y) * np.log(1-p) )
         res = np.sum(cost) / m
         return res
+        
         
     def costFunctionReg(self, theta = None, lamda = 1):
         if theta is None: theta= self.theta        
         m = self.X.shape[0]
         p = sigmoid ( np.dot(self.X, theta) )
+        eps = 1e-15  # Clipping to avoid log(0)
+        p = np.clip(p, eps, 1 - eps)
         cost  = (-self.y * np.log(p) - (1-self.y) * np.log(1-p) )
         reg = np.dot(theta[1:], theta[1:]) * lamda / (2*m)
         return (np.sum(cost) / m) + reg
         
-    def printCoefs(self):
-        print(self.theta)
-
     def predictMany(self, Xt):
         p = sigmoid ( np.dot(Xt, self.theta) )
         return np.where(p >= 0.5, 1, 0)
@@ -117,17 +132,6 @@ class LogisticRegression:
     
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
-  
-def mapFeature(X1, X2, degrees = 6):
-	out = np.ones( (np.shape(X1)[0], 1) )
-	
-	for i in range(1, degrees+1):
-		for j in range(0, i+1):
-			term1 = X1 ** (i-j)
-			term2 = X2 ** (j)
-			term  = (term1 * term2).reshape( np.shape(term1)[0], 1 ) 
-			out   = np.hstack(( out, term ))
-	return out  
   
   
 if __name__ == '__main__':
@@ -155,3 +159,18 @@ if __name__ == '__main__':
     val_predictions = log_model.predictMany(np.hstack((np.ones([dataset_val.nrows(), 1]), dataset_val.X)))
     val_accuracy = log_model.score(dataset_val)
     print(f"Validation Accuracy: {val_accuracy:.4f}")
+
+    # Predict com dados do stor!
+    dataset_stor = read_csv('input_prof.csv', sep=',', features=True, label=False)
+
+    stor_predictions = log_model.predictMany(np.hstack((np.ones([dataset_stor.nrows(), 1]), dataset_stor.X)))
+
+    binary_conv = {0: "Human", 1: "AI"}
+    stor_labels = np.vectorize(binary_conv.get)(stor_predictions)
+
+    num_samples = len(stor_labels)
+    ids = [f"D1-{i + 1}" for i in range(num_samples)]
+
+    output_array = np.column_stack((ids, stor_labels))
+    
+    np.savetxt('dataset1_outputs1_grupo_reglog.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')
