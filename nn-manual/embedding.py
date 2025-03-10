@@ -15,7 +15,17 @@ def load_glove_embeddings(file_path, embedding_dim=100):
     print(f"Loaded {len(embeddings_index)} word vectors from GloVe.")
     return embeddings_index
 
-def create_embedding_matrix(word_index, embeddings_index, oov_strategy="random", normalize=False, embedding_dim=100):
+def create_embedding_matrix(word_index, embeddings_index, oov_strategy="random", normalize=False, embedding_dim=100, file_path=None):
+
+    if embeddings_index == None and file_path != None:
+        embeddings_index = {}
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                values = line.split()
+                word = values[0]
+                vector = np.asarray(values[1:], dtype='float32')
+                embeddings_index[word] = vector
+
     vocab_size = len(word_index) + 1  # +1 for padding if needed
     embedding_matrix = np.zeros((vocab_size, embedding_dim))
 
@@ -53,39 +63,3 @@ def features_to_word_index(vocab):
 
 def convert_onehot_to_indices(onehot_matrix):
     return np.argmax(onehot_matrix, axis=1)
-
-def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100, oov_strategy="random"):
-    """ Load GloVe vectors and create an embedding matrix """
-    embeddings_index = {}
-    with open(file_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            values = line.split()
-            word = values[0]
-            vector = np.asarray(values[1:], dtype='float32')
-            embeddings_index[word] = vector
-    
-    vocab_size = len(word_index) + 1
-    embedding_matrix = np.zeros((vocab_size, embedding_dim))
-
-    # calcular a media dos embeddings
-    if oov_strategy == 'mean':
-        all_embeddings = np.array(list(embeddings_index.values()))
-        mean_embedding = np.mean(all_embeddings, axis=0)
-    
-    for word, i in word_index.items():
-        if word in embeddings_index:
-            embedding_matrix[i] = embeddings_index[word]
-        else:
-            if oov_strategy == "random":
-                embedding_matrix[i] = np.random.normal(scale=0.6, size=(embedding_dim,))  # Random init
-            
-            elif oov_strategy == "mean":
-                embedding_matrix[i] = mean_embedding
-
-            elif oov_strategy == "zero":
-                embedding_matrix[i] = np.zeros((embedding_dim,))
-            
-            else:
-                raise ValueError("Estrategia de OOV escolhida invalida.")
-    
-    return embedding_matrix
