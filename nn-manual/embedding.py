@@ -17,6 +17,9 @@ def load_glove_embeddings(file_path, embedding_dim=100):
 
 def create_embedding_matrix(word_index, embeddings_index=None, oov_strategy="random", normalize=False, embedding_dim=100, file_path=None):
 
+    if embeddings_index == None and file_path == None:
+        raise ValueError("ERRO NOS ARGUMENTOS")
+
     if embeddings_index == None and file_path != None:
         embeddings_index = load_glove_embeddings(file_path, embedding_dim)
 
