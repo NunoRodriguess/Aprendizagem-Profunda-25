@@ -66,6 +66,11 @@ def load_glove_embeddings_matrix(file_path, word_index, embedding_dim=100, oov_s
     
     vocab_size = len(word_index) + 1
     embedding_matrix = np.zeros((vocab_size, embedding_dim))
+
+    # calcular a media dos embeddings
+    if oov_strategy == 'mean':
+        all_embeddings = np.array(list(embeddings_index.values()))
+        mean_embedding = np.mean(all_embeddings, axis=0)
     
     for word, i in word_index.items():
         if word in embeddings_index:
