@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 import os
 import random
@@ -9,7 +7,6 @@ def set_seed(seed: int):
     random.seed(seed) # Python
     np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
     os.environ["PYTHONHASHSEED"] = str(seed)  # sistema operativo
-
 
 
 class LogisticRegression:
@@ -124,14 +121,43 @@ class LogisticRegression:
         errors = np.abs(preds-yt)
         return 1.0 - np.sum(errors)/yt.shape[0]
     
+    def f1_score(self, Xt, yt):
+        preds = self.predictMany(Xt)
+        
+        tp = np.sum((preds == 1) & (yt == 1))
+        fp = np.sum((preds == 1) & (yt == 0))
+        fn = np.sum((preds == 0) & (yt == 1))
+        
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        
+        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        
+        return f1, precision, recall
 
     def score(self, dataset):
         Xt = np.hstack((np.ones([dataset.nrows(), 1]), dataset.X))
         yt = dataset.y
         return self.accuracy(Xt, yt)
     
+    def score_f1(self, dataset):
+        Xt = np.hstack((np.ones([dataset.nrows(), 1]), dataset.X))
+        yt = dataset.y
+        return self.f1_score(Xt, yt)
+    
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
+  
+def mapFeature(X1, X2, degrees = 6):
+    out = np.ones( (np.shape(X1)[0], 1) )
+    
+    for i in range(1, degrees+1):
+        for j in range(0, i+1):
+            term1 = X1 ** (i-j)
+            term2 = X2 ** (j)
+            term  = (term1 * term2).reshape( np.shape(term1)[0], 1 ) 
+            out   = np.hstack(( out, term ))
+    return out  
   
   
 if __name__ == '__main__':
@@ -140,37 +166,46 @@ if __name__ == '__main__':
     set_seed(25)
 
     # Carregar os dados
-    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
-    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('../nn-manual/train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('../nn-manual/test.csv', sep=',', features=True, label=True)
+    dataset_val = read_csv('../nn-manual/validation.csv', sep=',', features=True, label=True)
+    dataset_stor = read_csv('input_prof.csv', sep=',', features=True, label=False)
 
     print("Done reading!")
+
+    # Verificar o balanceamento das classes
+    train_pos = np.sum(dataset_train.y)
+    train_neg = len(dataset_train.y) - train_pos
+    print(f"Distribuição no treino: Positivos={train_pos}, Negativos={train_neg}, Ratio={train_pos/len(dataset_train.y):.2f}")
 
     # Criar e treinar o modelo
     log_model = LogisticRegression(dataset_train, standardize=True, regularization=True, lamda=0.1)
     log_model.buildModel()  
 
-    # Testar o modelo
-    test_predictions = log_model.predictMany(np.hstack((np.ones([dataset_test.nrows(), 1]), dataset_test.X)))
+    # Testar o modelo - Accuracy
     test_accuracy = log_model.score(dataset_test)
-    print(f"Test Accuracy: {test_accuracy:.4f}")
-
-    # Validar o modelo
-    val_predictions = log_model.predictMany(np.hstack((np.ones([dataset_val.nrows(), 1]), dataset_val.X)))
     val_accuracy = log_model.score(dataset_val)
+    print(f"Test Accuracy: {test_accuracy:.4f}")
     print(f"Validation Accuracy: {val_accuracy:.4f}")
 
-    # Predict com dados do stor!
-    dataset_stor = read_csv('input_prof.csv', sep=',', features=True, label=False)
-
-    stor_predictions = log_model.predictMany(np.hstack((np.ones([dataset_stor.nrows(), 1]), dataset_stor.X)))
-
-    binary_conv = {0: "Human", 1: "AI"}
-    stor_labels = np.vectorize(binary_conv.get)(stor_predictions)
-
-    num_samples = len(stor_labels)
-    ids = [f"D1-{i + 1}" for i in range(num_samples)]
-
-    output_array = np.column_stack((ids, stor_labels))
+    # Testar o modelo - F1 Score
+    test_f1, test_precision, test_recall = log_model.score_f1(dataset_test)
+    print(f"Test F1 Score: {test_f1:.4f}, Precision: {test_precision:.4f}, Recall: {test_recall:.4f}")
     
-    np.savetxt('dataset1_outputs1_grupo_reglog.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')
+    val_f1, val_precision, val_recall = log_model.score_f1(dataset_val)
+    print(f"Validation F1 Score: {val_f1:.4f}, Precision: {val_precision:.4f}, Recall: {val_recall:.4f}")
+
+    # Previsões no dataset do professor
+    binary_conv = {0: "Human", 1: "AI"}
+    out = log_model.predictMany(np.hstack((np.ones([dataset_stor.nrows(), 1]), dataset_stor.X)))
+    out_labels = np.vectorize(binary_conv.get)(out)
+
+    # Criar IDs para as previsões
+    num_samples = len(out_labels)
+    ids = [f"D1-{i+1}" for i in range(num_samples)]
+
+    # Empilhar IDs e labels
+    output_array = np.column_stack((ids, out_labels))
+
+    # Salvar no formato desejado
+    np.savetxt('dataset1_outputs1_rl.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')

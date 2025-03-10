@@ -18,7 +18,7 @@ def set_seed(seed: int):
 
 class NeuralNetwork:
  
-    def __init__(self, epochs = 100, batch_size = 128, optimizer = None,
+    def __init__(self, epochs = 1000, batch_size = 128, optimizer = None,
                  learning_rate = 0.01, momentum = 0.90, verbose = False, 
                  loss = MeanSquaredError,
                  metric:callable = mse,
