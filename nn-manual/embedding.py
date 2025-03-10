@@ -15,7 +15,7 @@ def load_glove_embeddings(file_path, embedding_dim=100):
     print(f"Loaded {len(embeddings_index)} word vectors from GloVe.")
     return embeddings_index
 
-def create_embedding_matrix(word_index, embeddings_index, oov_strategy="random", normalize=False, embedding_dim=100, file_path=None):
+def create_embedding_matrix(word_index, embeddings_index=None, oov_strategy="random", normalize=False, embedding_dim=100, file_path=None):
 
     if embeddings_index == None and file_path != None:
         embeddings_index = load_glove_embeddings(file_path, embedding_dim)
