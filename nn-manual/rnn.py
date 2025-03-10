@@ -189,7 +189,6 @@ class RecurrentNeuralNetwork:
 
 if __name__ == '__main__':
     from data import Data, read_csv
-    from embedding import load_glove_embeddings_matrix
     from layers import EmbeddingLayerRNN, DenseLayer
     from activation import SigmoidActivation, ReLUActivation, TanhActivation
     from callback import EarlyStopping
@@ -210,8 +209,8 @@ if __name__ == '__main__':
     print("Dataset Loaded!")
 
     # Load GloVe embedding matrix
-    from embedding import load_glove_embeddings_matrix
-    embedding_matrix = load_glove_embeddings_matrix("nn-manual/glove.6B.100d.txt", word_index, embedding_dim=100)
+    from embedding import create_embedding_matrix
+    embedding_matrix = create_embedding_matrix(file_path="nn-manual/glove.6B.100d.txt", word_index=word_index, embedding_dim=100)
 
     # Define Early Stopping
     early_stopping = EarlyStopping(

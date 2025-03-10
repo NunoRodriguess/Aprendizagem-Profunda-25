@@ -18,13 +18,7 @@ def load_glove_embeddings(file_path, embedding_dim=100):
 def create_embedding_matrix(word_index, embeddings_index, oov_strategy="random", normalize=False, embedding_dim=100, file_path=None):
 
     if embeddings_index == None and file_path != None:
-        embeddings_index = {}
-        with open(file_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                values = line.split()
-                word = values[0]
-                vector = np.asarray(values[1:], dtype='float32')
-                embeddings_index[word] = vector
+        embeddings_index = load_glove_embeddings(file_path, embedding_dim)
 
     vocab_size = len(word_index) + 1  # +1 for padding if needed
     embedding_matrix = np.zeros((vocab_size, embedding_dim))
