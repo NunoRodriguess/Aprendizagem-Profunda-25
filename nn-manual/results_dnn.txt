@@ -218,3 +218,367 @@ Configuration: {'batch_size': 64, 'optimizer': <optimizer.RMSPropOptimizer objec
 Test Score: 0.8937012326133665
 Validation Score: 0.8882858435097241
 ----------------------------------------
+----------------------------------------
+Epoch 1/20 - loss: 0.2007 - accuracy: 0.9090
+Epoch 2/20 - loss: 0.0946 - accuracy: 0.9626
+Epoch 3/20 - loss: 0.0461 - accuracy: 0.9834
+Epoch 4/20 - loss: 0.0341 - accuracy: 0.9886
+Epoch 5/20 - loss: 0.0226 - accuracy: 0.9921
+
+Early stopping triggered at epoch 6
+Best metric: 0.9833721532091098 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7b1e7416ba40>, 'hidden_units': [128, 64, 32], 'dropout_rates': [0.3, 0.2], 'weight_init': ['xavier', 'xavier', 'he']}
+Test Score: 0.937012326133665
+Validation Score: 0.9416553595658074
+----------------------------------------
+Epoch 1/20 - loss: 0.2735 - accuracy: 0.8884
+Epoch 2/20 - loss: 0.1747 - accuracy: 0.9322
+Epoch 3/20 - loss: 0.1452 - accuracy: 0.9457
+Epoch 4/20 - loss: 0.1249 - accuracy: 0.9571
+Epoch 5/20 - loss: 0.1075 - accuracy: 0.9617
+Epoch 6/20 - loss: 0.0876 - accuracy: 0.9689
+Epoch 7/20 - loss: 0.0846 - accuracy: 0.9730
+Epoch 8/20 - loss: 0.0828 - accuracy: 0.9763
+
+Early stopping triggered at epoch 9
+Best metric: 0.9688792657704239 at epoch 6
+Restoring model weights from epoch 6
+Training stopped at epoch 8
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7b1e72f46cc0>, 'hidden_units': [100, 50, 20], 'dropout_rates': [0.5, 0.4], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9361076557729278
+Validation Score: 0.9380370872908186
+----------------------------------------
+Epoch 1/20 - loss: 0.2083 - accuracy: 0.9062
+Epoch 2/20 - loss: 0.0852 - accuracy: 0.9651
+Epoch 3/20 - loss: 0.0384 - accuracy: 0.9861
+Epoch 4/20 - loss: 0.0284 - accuracy: 0.9913
+Epoch 5/20 - loss: 0.0219 - accuracy: 0.9934
+
+Early stopping triggered at epoch 6
+Best metric: 0.9860931016597511 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 128, 'optimizer': <optimizer.AdamOptimizer object at 0x7b1e72f46e40>, 'hidden_units': [200, 100, 50], 'dropout_rates': [0.2, 0.1], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9373515775189415
+Validation Score: 0.9384893713251922
+----------------------------------------
+Epoch 1/20 - loss: 0.6835 - accuracy: 0.6562
+Epoch 2/20 - loss: 0.6359 - accuracy: 0.8149
+Epoch 3/20 - loss: 0.7429 - accuracy: 0.8067
+Epoch 4/20 - loss: 0.8042 - accuracy: 0.8111
+
+Early stopping triggered at epoch 5
+Best metric: 0.8148591003102379 at epoch 2
+Restoring model weights from epoch 2
+Training stopped at epoch 4
+Configuration: {'batch_size': 16, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7b1e72f46cf0>, 'hidden_units': [80, 40, 10], 'dropout_rates': [0.4, 0.3], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.8796788420219382
+Validation Score: 0.879692446856626
+----------------------------------------
+Epoch 1/20 - loss: 0.2630 - accuracy: 0.8808
+Epoch 2/20 - loss: 0.1417 - accuracy: 0.9418
+Epoch 3/20 - loss: 0.1004 - accuracy: 0.9607
+Epoch 4/20 - loss: 0.0724 - accuracy: 0.9743
+Epoch 5/20 - loss: 0.0580 - accuracy: 0.9785
+Epoch 6/20 - loss: 0.0453 - accuracy: 0.9841
+
+Early stopping triggered at epoch 7
+Best metric: 0.974314182194617 at epoch 4
+Restoring model weights from epoch 4
+Training stopped at epoch 6
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7b1e72f46d20>, 'hidden_units': [150, 75, 20], 'dropout_rates': [0.6, 0.5], 'weight_init': ['xavier', 'he', 'xavier']}
+Test Score: 0.9371254099287573
+Validation Score: 0.9423337856173677
+----------------------------------------
+Epoch 1/20 - loss: 14.1928 - accuracy: 0.5885
+Epoch 2/20 - loss: 14.2044 - accuracy: 0.5887
+Epoch 3/20 - loss: 14.2022 - accuracy: 0.5888
+
+Early stopping triggered at epoch 4
+Best metric: 0.5884824198552223 at epoch 1
+Restoring model weights from epoch 1
+Training stopped at epoch 3
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7b1e72f46d80>, 'hidden_units': [100, 50, 10], 'dropout_rates': [0.1, 0.05], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.5888273210448942
+Validation Score: 0.5888738127544098
+----------------------------------------
+Epoch 1/20 - loss: 0.1991 - accuracy: 0.9117
+Epoch 2/20 - loss: 0.0825 - accuracy: 0.9679
+Epoch 3/20 - loss: 0.0366 - accuracy: 0.9875
+Epoch 4/20 - loss: 0.0231 - accuracy: 0.9920
+Epoch 5/20 - loss: 0.0171 - accuracy: 0.9940
+
+Early stopping triggered at epoch 6
+Best metric: 0.9875194502074689 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 128, 'optimizer': <optimizer.AdamOptimizer object at 0x7b1e78eb4140>, 'hidden_units': [250, 100, 50], 'dropout_rates': [0.3, 0.2], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9348637340269139
+Validation Score: 0.9409769335142469
+----------------------------------------
+Epoch 1/20 - loss: 0.3073 - accuracy: 0.8815
+Epoch 2/20 - loss: 0.2374 - accuracy: 0.9155
+Epoch 3/20 - loss: 0.2284 - accuracy: 0.9274
+Epoch 4/20 - loss: 0.2127 - accuracy: 0.9359
+Epoch 5/20 - loss: 0.1967 - accuracy: 0.9423
+Epoch 6/20 - loss: 0.1768 - accuracy: 0.9501
+Epoch 7/20 - loss: 0.1741 - accuracy: 0.9528
+Epoch 8/20 - loss: 0.1855 - accuracy: 0.9550
+Epoch 9/20 - loss: 0.1809 - accuracy: 0.9553
+
+Early stopping triggered at epoch 10
+Best metric: 0.952817993795243 at epoch 7
+Restoring model weights from epoch 7
+Training stopped at epoch 9
+Configuration: {'batch_size': 16, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7b1e794795b0>, 'hidden_units': [60, 30, 10], 'dropout_rates': [0.5, 0.4], 'weight_init': ['xavier', 'he', 'xavier']}
+Test Score: 0.9301142146330431
+Validation Score: 0.9337403889642696
+----------------------------------------
+Epoch 1/20 - loss: 0.2075 - accuracy: 0.9076
+Epoch 2/20 - loss: 0.0990 - accuracy: 0.9599
+Epoch 3/20 - loss: 0.0499 - accuracy: 0.9816
+Epoch 4/20 - loss: 0.0323 - accuracy: 0.9887
+Epoch 5/20 - loss: 0.0233 - accuracy: 0.9929
+Epoch 6/20 - loss: 0.0200 - accuracy: 0.9940
+Epoch 7/20 - loss: 0.0172 - accuracy: 0.9945
+
+Early stopping triggered at epoch 8
+Best metric: 0.9928506728778468 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7b1e734d7440>, 'hidden_units': [120, 60, 30], 'dropout_rates': [0.2, 0.1], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.9349768178220061
+Validation Score: 0.9328358208955224
+----------------------------------------
+Epoch 1/20 - loss: 0.6409 - accuracy: 0.8099
+Epoch 2/20 - loss: 0.6775 - accuracy: 0.8079
+Epoch 3/20 - loss: 0.6824 - accuracy: 0.8194
+
+Early stopping triggered at epoch 4
+Best metric: 0.8099470010341262 at epoch 1
+Restoring model weights from epoch 1
+Training stopped at epoch 3
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7b1e7b82ff20>, 'hidden_units': [100, 50, 20], 'dropout_rates': [0.4, 0.3], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.8569489992084134
+Validation Score: 0.8516508367254636
+----------------------------------------
+Epoch 1/20 - loss: 0.2142 - accuracy: 0.9058
+Epoch 2/20 - loss: 0.0841 - accuracy: 0.9665
+Epoch 3/20 - loss: 0.0352 - accuracy: 0.9872
+Epoch 4/20 - loss: 0.0208 - accuracy: 0.9933
+Epoch 5/20 - loss: 0.0135 - accuracy: 0.9958
+
+Early stopping triggered at epoch 6
+Best metric: 0.9872217908902692 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7942aa2104a0>, 'hidden_units': [128, 64, 32], 'dropout_rates': [0.3, 0.2], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9366730747483886
+Validation Score: 0.9402985074626866
+----------------------------------------
+Epoch 1/20 - loss: 0.2951 - accuracy: 0.8819
+Epoch 2/20 - loss: 0.1775 - accuracy: 0.9315
+Epoch 3/20 - loss: 0.1398 - accuracy: 0.9478
+Epoch 4/20 - loss: 0.1196 - accuracy: 0.9574
+Epoch 5/20 - loss: 0.1079 - accuracy: 0.9631
+Epoch 6/20 - loss: 0.0905 - accuracy: 0.9703
+Epoch 7/20 - loss: 0.0899 - accuracy: 0.9729
+
+Early stopping triggered at epoch 8
+Best metric: 0.9631269389865563 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7942b100fb00>, 'hidden_units': [100, 50, 20], 'dropout_rates': [0.5, 0.4], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9373515775189415
+Validation Score: 0.9371325192220714
+----------------------------------------
+Epoch 1/20 - loss: 0.2044 - accuracy: 0.9091
+Epoch 2/20 - loss: 0.0778 - accuracy: 0.9698
+Epoch 3/20 - loss: 0.0360 - accuracy: 0.9869
+Epoch 4/20 - loss: 0.0193 - accuracy: 0.9938
+Epoch 5/20 - loss: 0.0158 - accuracy: 0.9949
+
+Early stopping triggered at epoch 6
+Best metric: 0.9869035269709544 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 128, 'optimizer': <optimizer.AdamOptimizer object at 0x7942affe9640>, 'hidden_units': [200, 100, 50], 'dropout_rates': [0.2, 0.1], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.9336198122809002
+Validation Score: 0.9369063772048847
+----------------------------------------
+Epoch 1/20 - loss: 0.2651 - accuracy: 0.8964
+Epoch 2/20 - loss: 0.1836 - accuracy: 0.9360
+Epoch 3/20 - loss: 0.1585 - accuracy: 0.9485
+Epoch 4/20 - loss: 0.1368 - accuracy: 0.9575
+Epoch 5/20 - loss: 0.1220 - accuracy: 0.9639
+Epoch 6/20 - loss: 0.1076 - accuracy: 0.9675
+Epoch 7/20 - loss: 0.1023 - accuracy: 0.9700
+
+Early stopping triggered at epoch 8
+Best metric: 0.9638702171664943 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 16, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7942aa7a3020>, 'hidden_units': [80, 40, 10], 'dropout_rates': [0.4, 0.3], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9336198122809002
+Validation Score: 0.942107643600181
+----------------------------------------
+Epoch 1/20 - loss: 0.2118 - accuracy: 0.9053
+Epoch 2/20 - loss: 0.1044 - accuracy: 0.9581
+Epoch 3/20 - loss: 0.0573 - accuracy: 0.9794
+Epoch 4/20 - loss: 0.0407 - accuracy: 0.9855
+Epoch 5/20 - loss: 0.0298 - accuracy: 0.9907
+Epoch 6/20 - loss: 0.0223 - accuracy: 0.9923
+Epoch 7/20 - loss: 0.0266 - accuracy: 0.9923
+
+Early stopping triggered at epoch 8
+Best metric: 0.9907479296066253 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7942aa706600>, 'hidden_units': [150, 75, 20], 'dropout_rates': [0.3, 0.2], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9361076557729278
+Validation Score: 0.9384893713251922
+----------------------------------------
+Epoch 1/20 - loss: 14.1928 - accuracy: 0.5885
+Epoch 2/20 - loss: 14.2044 - accuracy: 0.5887
+Epoch 3/20 - loss: 14.2022 - accuracy: 0.5888
+
+Early stopping triggered at epoch 4
+Best metric: 0.5884824198552223 at epoch 1
+Restoring model weights from epoch 1
+Training stopped at epoch 3
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7942aa0c6300>, 'hidden_units': [100, 50, 10], 'dropout_rates': [0.1, 0.05], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.5888273210448942
+Validation Score: 0.5888738127544098
+----------------------------------------
+Epoch 1/20 - loss: 0.2350 - accuracy: 0.8941
+Epoch 2/20 - loss: 0.1041 - accuracy: 0.9584
+Epoch 3/20 - loss: 0.0518 - accuracy: 0.9812
+Epoch 4/20 - loss: 0.0313 - accuracy: 0.9892
+Epoch 5/20 - loss: 0.0226 - accuracy: 0.9928
+Epoch 6/20 - loss: 0.0190 - accuracy: 0.9938
+Epoch 7/20 - loss: 0.0170 - accuracy: 0.9946
+
+Early stopping triggered at epoch 8
+Best metric: 0.9928358402489627 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 128, 'optimizer': <optimizer.AdamOptimizer object at 0x7942aa0c61e0>, 'hidden_units': [250, 100, 50], 'dropout_rates': [0.5, 0.4], 'weight_init': ['xavier', 'he', 'xavier']}
+Test Score: 0.9357684043876513
+Validation Score: 0.9355495251017639
+----------------------------------------
+Epoch 1/20 - loss: 20.3263 - accuracy: 0.4113
+Epoch 2/20 - loss: 20.3360 - accuracy: 0.4112
+Epoch 3/20 - loss: 20.3371 - accuracy: 0.4112
+
+Early stopping triggered at epoch 4
+Best metric: 0.4112913650465357 at epoch 1
+Restoring model weights from epoch 1
+Training stopped at epoch 3
+Configuration: {'batch_size': 16, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7942aa0c6450>, 'hidden_units': [60, 30, 10], 'dropout_rates': [0.4, 0.3], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.41117267895510573
+Validation Score: 0.41112618724559025
+----------------------------------------
+Epoch 1/20 - loss: 0.1994 - accuracy: 0.9111
+Epoch 2/20 - loss: 0.0878 - accuracy: 0.9653
+Epoch 3/20 - loss: 0.0434 - accuracy: 0.9846
+Epoch 4/20 - loss: 0.0238 - accuracy: 0.9918
+Epoch 5/20 - loss: 0.0158 - accuracy: 0.9944
+
+Early stopping triggered at epoch 6
+Best metric: 0.984569099378882 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7942aa0c6330>, 'hidden_units': [120, 60, 30], 'dropout_rates': [0.2, 0.1], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.9345244826416375
+Validation Score: 0.9357756671189507
+----------------------------------------
+Epoch 1/20 - loss: 0.2484 - accuracy: 0.8948
+Epoch 2/20 - loss: 0.1585 - accuracy: 0.9418
+Epoch 3/20 - loss: 0.1212 - accuracy: 0.9584
+Epoch 4/20 - loss: 0.0972 - accuracy: 0.9667
+Epoch 5/20 - loss: 0.0815 - accuracy: 0.9740
+Epoch 6/20 - loss: 0.0727 - accuracy: 0.9778
+Epoch 7/20 - loss: 0.0601 - accuracy: 0.9825
+
+Early stopping triggered at epoch 8
+Best metric: 0.9739852637021716 at epoch 5
+Restoring model weights from epoch 5
+Training stopped at epoch 7
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7942aa0c6390>, 'hidden_units': [100, 50, 20], 'dropout_rates': [0.5, 0.4], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9373515775189415
+Validation Score: 0.9396200814111262
+----------------------------------------
+
+
+
+DNN Atualizada com mais layers, l2_lambda reg,...
+----------------------------------------
+Epoch 1/50 - loss: 0.2428 - accuracy: 0.8920
+Epoch 2/50 - loss: 0.1067 - accuracy: 0.9571
+Epoch 3/50 - loss: 0.0546 - accuracy: 0.9808
+Epoch 4/50 - loss: 0.0343 - accuracy: 0.9884
+Epoch 5/50 - loss: 0.0283 - accuracy: 0.9904
+
+Early stopping triggered at epoch 6
+Best metric: 0.9808165113871635 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7aa2adae8ce0>, 'hidden_units': [256, 128, 64], 'dropout_rates': [0.5, 0.4], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9339590636661766
+Validation Score: 0.9339665309814563
+----------------------------------------
+Epoch 1/50 - loss: 0.2803 - accuracy: 0.8810
+Epoch 2/50 - loss: 0.2215 - accuracy: 0.9047
+Epoch 3/50 - loss: 0.2114 - accuracy: 0.9097
+Epoch 4/50 - loss: 0.2115 - accuracy: 0.9104
+
+Early stopping triggered at epoch 5
+Best metric: 0.9046664943123061 at epoch 2
+Restoring model weights from epoch 2
+Training stopped at epoch 4
+Configuration: {'batch_size': 32, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7aa2ae13fd70>, 'hidden_units': [200, 100, 50], 'dropout_rates': [0.6, 0.5], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9250254438538957
+Validation Score: 0.927860696517413
+----------------------------------------
+Epoch 1/50 - loss: 0.2081 - accuracy: 0.9062
+Epoch 2/50 - loss: 0.0760 - accuracy: 0.9704
+Epoch 3/50 - loss: 0.0341 - accuracy: 0.9878
+Epoch 4/50 - loss: 0.0203 - accuracy: 0.9932
+Epoch 5/50 - loss: 0.0177 - accuracy: 0.9941
+
+Early stopping triggered at epoch 6
+Best metric: 0.9878436203319502 at epoch 3
+Restoring model weights from epoch 3
+Training stopped at epoch 5
+Configuration: {'batch_size': 128, 'optimizer': <optimizer.AdamOptimizer object at 0x7aa2ae30f140>, 'hidden_units': [300, 150, 75], 'dropout_rates': [0.3, 0.2], 'weight_init': ['he', 'he', 'he']}
+Test Score: 0.9378039126993102
+Validation Score: 0.9407507914970602
+----------------------------------------
+Epoch 1/50 - loss: 0.2662 - accuracy: 0.8913
+Epoch 2/50 - loss: 0.2078 - accuracy: 0.9177
+Epoch 3/50 - loss: 0.1972 - accuracy: 0.9221
+Epoch 4/50 - loss: 0.1918 - accuracy: 0.9232
+
+Early stopping triggered at epoch 5
+Best metric: 0.9177223371251293 at epoch 2
+Restoring model weights from epoch 2
+Training stopped at epoch 4
+Configuration: {'batch_size': 16, 'optimizer': <optimizer.RMSPropOptimizer object at 0x7aa2b4a06f90>, 'hidden_units': [150, 75, 30], 'dropout_rates': [0.4, 0.3], 'weight_init': ['he', 'xavier', 'he']}
+Test Score: 0.9193712540992875
+Validation Score: 0.9170058796924468
+----------------------------------------
+Epoch 1/50 - loss: 0.2314 - accuracy: 0.8959
+Epoch 2/50 - loss: 0.1777 - accuracy: 0.9206
+Epoch 3/50 - loss: 0.1754 - accuracy: 0.9235
+Epoch 4/50 - loss: 0.1693 - accuracy: 0.9272
+
+Early stopping triggered at epoch 5
+Best metric: 0.9205810041407867 at epoch 2
+Restoring model weights from epoch 2
+Training stopped at epoch 4
+Configuration: {'batch_size': 64, 'optimizer': <optimizer.AdamOptimizer object at 0x7aa2adae8b30>, 'hidden_units': [200, 100, 50], 'dropout_rates': [0.4, 0.3], 'weight_init': ['xavier', 'xavier', 'xavier']}
+Test Score: 0.9280787063213841
+Validation Score: 0.9240162822252375
+----------------------------------------
