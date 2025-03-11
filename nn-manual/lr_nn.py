@@ -7,7 +7,7 @@ def set_seed(seed: int):
     random.seed(seed)  # Python
     np.random.seed(seed)  # Numpy
     os.environ["PYTHONHASHSEED"] = str(seed)  # sistema operativo
-
+    
 class NeuralNetworkLogisticRegression:
     
     def __init__(self, dataset, standardize=False, regularization=False, lamda=1, learning_rate=0.01, epochs=1000):
@@ -113,6 +113,9 @@ class NeuralNetworkLogisticRegression:
 
 if __name__ == '__main__':
     from data import read_csv
+    import time
+
+    start_time = time.time()
 
     set_seed(25)
 
@@ -131,6 +134,7 @@ if __name__ == '__main__':
 
     # Criar e treinar o modelo
     nn_log_model = NeuralNetworkLogisticRegression(dataset_train, standardize=True, regularization=True, lamda=0.1, learning_rate=0.01, epochs=1000)
+    #nn_log_model = SimpleNeuralNetwork(dataset_train, standardize=True, regularization=True, lamda=0.1, learning_rate=0.01, epochs=1000)
     nn_log_model.gradientDescent()
 
     # Testar o modelo - Accuracy
@@ -145,6 +149,10 @@ if __name__ == '__main__':
     
     val_f1, val_precision, val_recall = nn_log_model.score_f1(dataset_val)
     print(f"Validation F1 Score: {val_f1:.4f}, Precision: {val_precision:.4f}, Recall: {val_recall:.4f}")
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Tempo total de execução: {elapsed_time:.2f} segundos")
 
     # Previsões no dataset do professor
     binary_conv = {0: "Human", 1: "AI"}

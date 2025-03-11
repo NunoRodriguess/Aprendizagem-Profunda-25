@@ -129,35 +129,66 @@ if __name__ == '__main__':
     from activation import SigmoidActivation, ReLUActivation
     from metrics import mse, accuracy
     from data import read_csv
-    from optimizer import Optimizer,AdamOptimizer
+    from optimizer import Optimizer, AdamOptimizer
 
     set_seed(25)
-    # training data
+
+    # Carregar os dados
     dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
     dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
+    dataset_stor = read_csv('../reg_logistica/input_prof.csv', sep=',', features=True, label=False)
 
     print("Done reading!")
-    # network
+
+    # Verificar o balanceamento das classes no treino
+    train_pos = np.sum(dataset_train.y)
+    train_neg = len(dataset_train.y) - train_pos
+    print(f"Distribuição no treino: Positivos={train_pos}, Negativos={train_neg}, Ratio={train_pos/len(dataset_train.y):.2f}")
+
+    # Criar e treinar a rede neural
     net = NeuralNetwork(epochs=20, batch_size=16, verbose=True,
                         loss=BinaryCrossEntropy, metric=accuracy, learning_rate=0.1)
     n_features = dataset_train.X.shape[1]
     net.add(DenseLayer(20, (n_features,)))
     net.add(ReLUActivation())
-
     net.add(DenseLayer(1))
     net.add(SigmoidActivation())
 
-    # train
+    # Treinar o modelo
     net.fit(dataset_train)
 
-    # test
-    out = net.predict(dataset_test, binary=True)
-    print(net.score(dataset_test, out))
-    # write predictions on file
-    np.savetxt('predictions.csv', out, delimiter=',')
+    # Testar o modelo no conjunto de teste
+    out_test = net.predict(dataset_test, binary=True)
+    test_accuracy = net.score(dataset_test, out_test)
+    print(f"Test Accuracy: {test_accuracy:.4f}")
 
-    # validation
+    # Validar o modelo no conjunto de validação
     dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
-    val = net.predict(dataset_val,binary=True)
-    print(net.score(dataset_val, val))
-    np.savetxt('predictions_val.csv', val, delimiter=',')
+    out_val = net.predict(dataset_val, binary=True)
+    val_accuracy = net.score(dataset_val, out_val)
+    print(f"Validation Accuracy: {val_accuracy:.4f}")
+
+    # Aplicar o modelo ao dataset input_stor
+    out_stor = net.predict(dataset_stor, binary=True)
+
+    # Converter previsões para labels (Human ou AI)
+    binary_conv = {0: "Human", 1: "AI"}
+    out_labels = np.vectorize(binary_conv.get)(out_stor)
+
+    # Criar IDs para as previsões
+    num_samples = len(out_labels)
+    ids = [f"D1-{i+1}" for i in range(num_samples)]
+
+    # Empilhar IDs e labels
+    output_array = np.column_stack((ids, out_labels))
+
+    # Salvar as previsões no formato desejado
+    np.savetxt('predictions_stor.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')
+
+    # Verificar a semelhança entre os dados de treino e input_stor
+    def compare_distributions(train_data, stor_data):
+        print("\nComparando distribuições:")
+        print(f"Média (Treino): {np.mean(train_data, axis=0)}")
+        print(f"Média (Input_stor): {np.mean(stor_data, axis=0)}")
+        print(f"Desvio Padrão (Treino): {np.std(train_data, axis=0)}")
+        print(f"Desvio Padrão (Input_stor): {np.std(stor_data, axis=0)}")

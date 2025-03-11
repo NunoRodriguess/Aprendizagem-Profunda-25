@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 import os
 import random
@@ -148,6 +149,8 @@ def mapFeature(X1, X2, degrees = 6):
 if __name__ == '__main__':
     from data import read_csv 
 
+    start_time = time.time()
+
     set_seed(25)
 
     # Carregar os dados
@@ -179,6 +182,10 @@ if __name__ == '__main__':
     
     val_f1, val_precision, val_recall = log_model.score_f1(dataset_val)
     print(f"Validation F1 Score: {val_f1:.4f}, Precision: {val_precision:.4f}, Recall: {val_recall:.4f}")
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Tempo total de execução: {elapsed_time:.2f} segundos")
 
     # Previsões no dataset do professor
     binary_conv = {0: "Human", 1: "AI"}
