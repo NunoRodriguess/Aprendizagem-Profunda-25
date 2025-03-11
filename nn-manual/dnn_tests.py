@@ -45,15 +45,15 @@ def test_configurations(configurations, dataset_train, dataset_test, dataset_val
         n_features = dataset_train.X.shape[1]
         
         # Add layers to the network
-        net.add(DenseLayer(config['hidden_units'][0], (n_features,), init_weights="xavier"))
+        net.add(DenseLayer(config['hidden_units'][0], (n_features,), init_weights=config['weight_init'][0]))
         net.add(ReLUActivation())
         net.add(DropoutLayer(dropout_rate=config['dropout_rates'][0]))
         
-        net.add(DenseLayer(config['hidden_units'][1], init_weights="xavier"))
+        net.add(DenseLayer(config['hidden_units'][1], init_weights=config['weight_init'][1]))
         net.add(ReLUActivation())
         net.add(DropoutLayer(dropout_rate=config['dropout_rates'][1]))
         
-        net.add(DenseLayer(config['hidden_units'][2], init_weights="xavier"))
+        net.add(DenseLayer(config['hidden_units'][2], init_weights=config['weight_init'][2]))
         net.add(ReLUActivation())
         
         net.add(DenseLayer(1, init_weights="he"))
@@ -96,110 +96,85 @@ if __name__ == '__main__':
     
     # Define different configurations to test
     configurations = [
-        # Configuração 1: RMSProp com learning rate alto e dropout moderado
-        # {
-        #     'batch_size': 32,
-        #     'optimizer': RMSPropOptimizer(learning_rate=0.1, beta=0.99),
-        #     'hidden_units': [50, 20, 6],
-        #     'dropout_rates': [0.6, 0.5]
-        # },
-        # # Configuração 2: Adam com learning rate baixo e dropout baixo
-        # {
-        #     'batch_size': 64,
-        #     'optimizer': AdamOptimizer(learning_rate=0.001),
-        #     'hidden_units': [100, 50, 10],
-        #     'dropout_rates': [0.3, 0.2]
-        # },
-        # # Configuração 3: RMSProp com learning rate médio e dropout alto
-        # {
-        #     'batch_size': 16,
-        #     'optimizer': RMSPropOptimizer(learning_rate=0.05, beta=0.9),
-        #     'hidden_units': [30, 15, 5],
-        #     'dropout_rates': [0.5, 0.4]
-        # },
-        # # Configuração 4: Adam com learning rate alto e dropout moderado
-        # {
-        #     'batch_size': 128,
-        #     'optimizer': AdamOptimizer(learning_rate=0.01),
-        #     'hidden_units': [200, 100, 50],
-        #     'dropout_rates': [0.4, 0.3]
-        # },
-        # # Configuração 5: RMSProp com learning rate baixo e dropout baixo
-        # {
-        #     'batch_size': 32,
-        #     'optimizer': RMSPropOptimizer(learning_rate=0.01, beta=0.95),
-        #     'hidden_units': [80, 40, 10],
-        #     'dropout_rates': [0.2, 0.1]
-        # },
-        # # Configuração 6: Adam com learning rate médio e dropout alto
-        # {
-        #     'batch_size': 64,
-        #     'optimizer': AdamOptimizer(learning_rate=0.005),
-        #     'hidden_units': [150, 75, 20],
-        #     'dropout_rates': [0.5, 0.4]
-        # },
-        # Configuração 7: RMSProp com learning rate muito baixo e dropout muito baixo
-        {
-            'batch_size': 16,
-            'optimizer': RMSPropOptimizer(learning_rate=0.001, beta=0.99),
-            'hidden_units': [60, 30, 10],
-            'dropout_rates': [0.1, 0.05]
-        },
-        # Configuração 8: Adam com learning rate alto e sem dropout
-        {
-            'batch_size': 32,
-            'optimizer': AdamOptimizer(learning_rate=0.1),
-            'hidden_units': [100, 50, 20],
-            'dropout_rates': [0.0, 0.0]
-        },
-        # Configuração 9: RMSProp com learning rate médio e dropout variável
+        # Configuração 1: Adam com learning rate médio, dropout moderado e inicialização Xavier/He
         {
             'batch_size': 64,
-            'optimizer': RMSPropOptimizer(learning_rate=0.05, beta=0.9),
-            'hidden_units': [120, 60, 30],
-            'dropout_rates': [0.3, 0.2]
+            'optimizer': AdamOptimizer(learning_rate=0.005),
+            'hidden_units': [128, 64, 32],
+            'dropout_rates': [0.3, 0.2],
+            'weight_init': ['xavier', 'xavier', 'he']  # Xavier para as camadas ocultas, He para a última
         },
-        # Configuração 10: Adam com learning rate baixo e dropout alto
+        # Configuração 2: RMSProp com learning rate baixo, dropout alto e inicialização He/Xavier
+        {
+            'batch_size': 32,
+            'optimizer': RMSPropOptimizer(learning_rate=0.01, beta=0.99),
+            'hidden_units': [100, 50, 20],
+            'dropout_rates': [0.5, 0.4],
+            'weight_init': ['he', 'xavier', 'he']  # He para a primeira e última camadas, Xavier para a intermediária
+        },
+        # Configuração 3: Adam com learning rate alto, dropout baixo e inicialização Xavier
         {
             'batch_size': 128,
-            'optimizer': AdamOptimizer(learning_rate=0.001),
-            'hidden_units': [250, 100, 50],
-            'dropout_rates': [0.6, 0.5]
+            'optimizer': AdamOptimizer(learning_rate=0.01),
+            'hidden_units': [200, 100, 50],
+            'dropout_rates': [0.2, 0.1],
+            'weight_init': ['xavier', 'xavier', 'xavier']  # Xavier em todas as camadas
         },
-        # Configuração 11: RMSProp com learning rate alto e dropout muito alto
+        # Configuração 4: RMSProp com learning rate médio, dropout moderado e inicialização He
         {
-            'batch_size': 32,
-            'optimizer': RMSPropOptimizer(learning_rate=0.2, beta=0.99),
-            'hidden_units': [50, 25, 10],
-            'dropout_rates': [0.7, 0.6]
+            'batch_size': 16,
+            'optimizer': RMSPropOptimizer(learning_rate=0.05, beta=0.9),
+            'hidden_units': [80, 40, 10],
+            'dropout_rates': [0.4, 0.3],
+            'weight_init': ['he', 'he', 'he']  # He em todas as camadas
         },
-        # Configuração 12: Adam com learning rate médio e dropout moderado
+        # Configuração 5: Adam com learning rate baixo, dropout alto e inicialização Xavier/He
         {
             'batch_size': 64,
-            'optimizer': AdamOptimizer(learning_rate=0.01),
-            'hidden_units': [100, 50, 20],
-            'dropout_rates': [0.4, 0.3]
+            'optimizer': AdamOptimizer(learning_rate=0.001),
+            'hidden_units': [150, 75, 20],
+            'dropout_rates': [0.6, 0.5],
+            'weight_init': ['xavier', 'he', 'xavier']  # Xavier na primeira e última, He na intermediária
         },
-        # Configuração 13: RMSProp com learning rate baixo e dropout moderado
+        # Configuração 6: RMSProp com learning rate alto, dropout baixo e inicialização He
+        {
+            'batch_size': 32,
+            'optimizer': RMSPropOptimizer(learning_rate=0.1, beta=0.99),
+            'hidden_units': [100, 50, 10],
+            'dropout_rates': [0.1, 0.05],
+            'weight_init': ['he', 'he', 'he']  # He em todas as camadas
+        },
+        # Configuração 7: Adam com learning rate médio, dropout moderado e inicialização Xavier
+        {
+            'batch_size': 128,
+            'optimizer': AdamOptimizer(learning_rate=0.005),
+            'hidden_units': [250, 100, 50],
+            'dropout_rates': [0.3, 0.2],
+            'weight_init': ['xavier', 'xavier', 'xavier']  # Xavier em todas as camadas
+        },
+        # Configuração 8: RMSProp com learning rate baixo, dropout alto e inicialização Xavier/He
         {
             'batch_size': 16,
             'optimizer': RMSPropOptimizer(learning_rate=0.01, beta=0.95),
-            'hidden_units': [80, 40, 10],
-            'dropout_rates': [0.3, 0.2]
+            'hidden_units': [60, 30, 10],
+            'dropout_rates': [0.5, 0.4],
+            'weight_init': ['xavier', 'he', 'xavier']  # Xavier na primeira e última, He na intermediária
         },
-        # Configuração 14: Adam com learning rate alto e dropout baixo
-        {
-            'batch_size': 32,
-            'optimizer': AdamOptimizer(learning_rate=0.1),
-            'hidden_units': [150, 75, 25],
-            'dropout_rates': [0.2, 0.1]
-        },
-        # Configuração 15: RMSProp com learning rate médio e dropout baixo
+        # Configuração 9: Adam com learning rate alto, dropout baixo e inicialização He
         {
             'batch_size': 64,
+            'optimizer': AdamOptimizer(learning_rate=0.01),
+            'hidden_units': [120, 60, 30],
+            'dropout_rates': [0.2, 0.1],
+            'weight_init': ['he', 'he', 'he']  # He em todas as camadas
+        },
+        # Configuração 10: RMSProp com learning rate médio, dropout moderado e inicialização Xavier
+        {
+            'batch_size': 32,
             'optimizer': RMSPropOptimizer(learning_rate=0.05, beta=0.9),
             'hidden_units': [100, 50, 20],
-            'dropout_rates': [0.2, 0.1]
+            'dropout_rates': [0.4, 0.3],
+            'weight_init': ['xavier', 'xavier', 'xavier']  # Xavier em todas as camadas
         }
     ]
     
