@@ -5,7 +5,7 @@ from losses import LossFunction, MeanSquaredError
 from optimizer import Optimizer
 from losses import BinaryCrossEntropy
 from activation import SigmoidActivation, ReLUActivation
-from metrics import mse, accuracy, precision_recall_f1
+from metrics import mse, accuracy, precision_recall_f1, recall
 from data import read_csv
 from optimizer import Optimizer,AdamOptimizer, RMSPropOptimizer
 from neuralnet import NeuralNetwork
@@ -13,6 +13,20 @@ from callback import EarlyStopping
 import numpy as np
 import os
 import random
+import csv
+
+def compare_csv_files(file1, file2):
+    with open(file1, 'r', newline='', encoding='utf-8') as f1, open(file2, 'r', newline='', encoding='utf-8') as f2:
+        reader1 = csv.reader(f1, delimiter='\t')
+        reader2 = csv.reader(f2, delimiter='\t')
+        
+        lines1 = list(reader1)
+        lines2 = list(reader2)
+        
+        max_lines = max(len(lines1), len(lines2))
+        differing_lines = sum(1 for i in range(max_lines) if i >= len(lines1) or i >= len(lines2) or lines1[i] != lines2[i])
+        
+        print(f"Number of differing lines: {differing_lines}")
 
 def set_seed(seed: int):
     random.seed(seed) # Python
@@ -38,22 +52,14 @@ if __name__ == '__main__':
         restore_best_weights=True  # Restore to best weights when stopped
     )
 
-    net = NeuralNetwork(epochs=500, batch_size=32, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.1,beta=0.99),callbacks=[early_stopping])
+    net = NeuralNetwork(epochs=500, batch_size=16, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.001,beta=0.99),callbacks=[early_stopping])
 
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(50, (n_features,),init_weights="xavier"))
+    net.add(DenseLayer(6, (n_features,),init_weights="xavier"))
     net.add(ReLUActivation())
-
-    net.add(DropoutLayer(dropout_rate=0.6))
-
-    net.add(DenseLayer(20,init_weights="xavier"))
-    net.add(ReLUActivation())
-
-    net.add(DropoutLayer(dropout_rate=0.5))
-
-    net.add(DenseLayer(6,init_weights="xavier"))
-    net.add(ReLUActivation())
+    
+    net.add(DropoutLayer(dropout_rate=0.4))
 
     net.add(DenseLayer(1,init_weights="he"))
     net.add(SigmoidActivation())
@@ -106,4 +112,5 @@ if __name__ == '__main__':
 
     # Save to file with header
     np.savetxt('dataset1_outputs1_grupo.csv', output_array, delimiter='\t', fmt='%s', header="ID\tLabel", comments='')
+    compare_csv_files("dataset1_outputs.csv", "dataset1_outputs1_grupo.csv")
 

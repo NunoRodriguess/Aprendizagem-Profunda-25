@@ -1,8 +1,8 @@
 human_or_ai_dataset.csv
 *.csv
-nn-manual/__pycache__
+nn_manual/__pycache__
 reg_logistica/__pycache__
 .DS_Store
-nn-manual/test.csv
-nn-manual/validation.csv
-nn-manual/train.csv
+nn_manual/test.csv
+nn_manual/validation.csv
+nn_manual/train.csv
