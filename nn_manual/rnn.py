@@ -18,7 +18,7 @@ from metrics import mse,accuracy,precision_recall_f1,recall,precision
 from callback import EarlyStopping
 
 class RNN(Layer):
-    def __init__(self, n_units, input_shape=None, bptt_trunc=5, return_sequences=False, activation=None):
+    def __init__(self, n_units, input_shape=None, bptt_trunc=5, return_sequences=False, activation=None, clip_value=5.0):
         super().__init__()
         self.n_units = n_units
         self.bptt_trunc = bptt_trunc
@@ -27,6 +27,7 @@ class RNN(Layer):
         
         self.activation = activation if activation else TanhActivation()
         
+        self.clip_value = clip_value
         self.U = None  # Input weights
         self.W = None  # Recurrent weights
         self.V = None  # Output weights
@@ -80,6 +81,11 @@ class RNN(Layer):
                 grad_W += grad_wrt_state.T.dot(self.states[:, t_ - 1])
                 grad_wrt_state = grad_wrt_state.dot(self.W.T) * self.activation.derivative(self.state_input[:, t_ - 1])
         
+        # aplicar gradiente clipping pra evitar a explosao dos gradientes
+        gradients = [grad_U, grad_W, grad_V]
+        clipped_gradients = self.clip_gradients(gradients, self.clip_value)
+        grad_U, grad_W, grad_V = clipped_gradients
+
         self.U = self.U_opt.update(self.U, grad_U)
         self.W = self.W_opt.update(self.W, grad_W)
         self.V = self.V_opt.update(self.V, grad_V)
@@ -95,6 +101,15 @@ class RNN(Layer):
     
     def parameters(self):
         return np.prod(self.W.shape) + np.prod(self.U.shape) + np.prod(self.V.shape)
+    
+    def clip_gradients(self, gradients, clip_value):
+        clipped_gradients = []
+        for grad in gradients:
+            norm = np.linalg.norm(grad)
+            if norm > clip_value:
+                grad = grad * (clip_value / norm) 
+            clipped_gradients.append(grad)
+        return clipped_gradients
 
 class RecurrentNeuralNetwork:
     def __init__(self, epochs=100, batch_size=128, optimizer=None, learning_rate=0.01, momentum=0.90,
