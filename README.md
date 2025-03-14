@@ -2,10 +2,10 @@
 ## Grupo 1
 
 ### Membros do Grupo:
-- **David Teixeira**  
-- **Eduardo Cunha**  
-- **Jorge Rodrigues**  
-- **Tiago Rodrigues**  
+- **David Teixeira** - PG55929
+- **Eduardo Cunha** - PG55939
+- **Jorge Rodrigues** - PG55966
+- **Tiago Rodrigues** - PG56013
 
 ---
 
