@@ -1,3 +1,7 @@
+####
+#### Código baseado no material da UC Aprendizagem Profunda 24-25
+####
+
 from abc import abstractmethod
 import numpy as np
 from layers import Layer

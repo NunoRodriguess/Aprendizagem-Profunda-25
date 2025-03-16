@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+####
+#### Código baseado no material da UC Aprendizagem Profunda 24-25
+####
 
 import numpy as np
 import copy

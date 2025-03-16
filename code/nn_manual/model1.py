@@ -25,8 +25,8 @@ if __name__ == '__main__':
 
     set_seed(25)
     # training data
-    dataset_train = read_csv('train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('test.csv', sep=',', features=True, label=True)
+    dataset_train = read_csv('datasets/train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('datasets/test.csv', sep=',', features=True, label=True)
 
     print("Done reading!")
     # network
@@ -34,25 +34,29 @@ if __name__ == '__main__':
     early_stopping = EarlyStopping(
         monitor='metric',  # Monitor validation metric or loss
         min_delta=0.0001,       # Minimum change to qualify as improvement
-        patience=20,           # Stop after 10 epochs without improvement
+        patience=10,           # Stop after 10 epochs without improvement
         verbose=True,          # Print messages
         mode='max',            # We want metric to increase (for accuracy)
         restore_best_weights=True  # Restore to best weights when stopped
     )
 
-    net = NeuralNetwork(epochs=500, batch_size=16, verbose=True,
-                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=RMSPropOptimizer(learning_rate=0.001,beta=0.99),callbacks=[early_stopping])
+    net = NeuralNetwork(epochs=200, batch_size=64, verbose=True,
+                        loss=BinaryCrossEntropy, metric=accuracy, optimizer=AdamOptimizer(learning_rate=0.1),callbacks=[early_stopping])
 
     n_features = dataset_train.X.shape[1]
-    net.add(DenseLayer(6, (n_features,),init_weights="xavier"))
+    net.add(DenseLayer(150, (n_features,),init_weights="xavier"))
+    net.add(ReLUActivation())
+
+    net.add(DropoutLayer(dropout_rate=0.6))
+
+    net.add(DenseLayer(75,init_weights="he"))
     net.add(ReLUActivation())
     
-    net.add(DropoutLayer(dropout_rate=0.4))
+    net.add(DropoutLayer(dropout_rate=0.5))
 
     net.add(DenseLayer(1,init_weights="he"))
     net.add(SigmoidActivation())
     #net.add(ReLUActivation())
-
     #net.add(DropoutLayer(droupout_rate=0.1))
 
     # train
@@ -65,7 +69,7 @@ if __name__ == '__main__':
     np.savetxt('predictions.csv', out, delimiter=',')
 
     # Load validation dataset
-    dataset_val = read_csv('validation.csv', sep=',', features=True, label=True)
+    dataset_val = read_csv('datasets/validation.csv', sep=',', features=True, label=True)
 
     # Get predictions
     val = net.predict(dataset_val, binary=True)

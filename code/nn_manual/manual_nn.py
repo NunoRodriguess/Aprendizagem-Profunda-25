@@ -1,3 +1,6 @@
+####
+#### Código baseado no material da UC Aprendizagem Profunda 24-25
+####
 import numpy as np
 
 from layers import DenseLayer, DropoutLayer

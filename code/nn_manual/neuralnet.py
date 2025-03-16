@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+####
+#### Código baseado no material da UC Aprendizagem Profunda 24-25
+####
 
 import numpy as np
 
@@ -7,14 +8,6 @@ from layers import DenseLayer, DropoutLayer
 from losses import LossFunction, MeanSquaredError
 from optimizer import Optimizer
 from metrics import mse
-
-import os
-import random
-def set_seed(seed: int):
-    random.seed(seed) # Python
-    np.random.seed(seed)  # Numpy, é o gerador utilizado pelo sklearn
-    os.environ["PYTHONHASHSEED"] = str(seed)  # sistema operativo
-
 
 class NeuralNetwork:
  
