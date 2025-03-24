@@ -23,3 +23,7 @@ Contém o código dos modelos desenvolvidos, com base no código utilizado nas a
 ### Pasta `/Submissão1`  
 - Um *notebook* com o código para prever as classes do conjunto de dados fornecido pelo professor.  
 - Ficheiros CSV com as previsões geradas.
+
+### Pasta `/Submissão2`  
+- Dois *notebooks* com o código para prever as classes do conjunto de dados fornecido pelo professor.  
+- Ficheiros CSV com as previsões geradas.
