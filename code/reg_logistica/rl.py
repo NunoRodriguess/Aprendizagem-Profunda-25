@@ -11,7 +11,7 @@ def set_seed(seed: int):
 
 class LogisticRegression:
     
-    def __init__(self, dataset, standardize = False, regularization = False, lamda = 1):
+    def __init__(self, dataset, standardize = False, regularization = False, lamda = 1,optimization_method='scipy'):
         if standardize:
             dataset.standardize()
             self.X = np.hstack ((np.ones([dataset.nrows(),1]), dataset.Xst ))
@@ -24,12 +24,19 @@ class LogisticRegression:
         self.regularization = regularization
         self.lamda = lamda
         self.data = dataset
+        self.optimization_method = optimization_method
 
-    def buildModel(self):
-        if self.regularization:
-            self.optim_model_reg(self.lamda)    
+    def buildModel(self, alpha=0.01, iters=1000, tol=1e-5):
+
+        if self.optimization_method == 'gradient_descent':
+            # Usa Gradient Descent
+            self.gradientDescent(alpha=alpha, iters=iters, tol=tol)
         else:
-            self.optim_model()
+            # Método padrão (SciPy)
+            if self.regularization:
+                self.optim_model_reg(self.lamda)    
+            else:
+                self.optim_model()
 
     def gradientDescent(self, alpha=0.01, iters=100, tol=1e-5):
         m = self.X.shape[0]  
@@ -148,17 +155,6 @@ class LogisticRegression:
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
   
-def mapFeature(X1, X2, degrees = 6):
-    out = np.ones( (np.shape(X1)[0], 1) )
-    
-    for i in range(1, degrees+1):
-        for j in range(0, i+1):
-            term1 = X1 ** (i-j)
-            term2 = X2 ** (j)
-            term  = (term1 * term2).reshape( np.shape(term1)[0], 1 ) 
-            out   = np.hstack(( out, term ))
-    return out  
-  
   
 if __name__ == '__main__':
     from data import read_csv 
@@ -166,10 +162,11 @@ if __name__ == '__main__':
     set_seed(25)
 
     # Carregar os dados
-    dataset_train = read_csv('../nn-manual/train.csv', sep=',', features=True, label=True)
-    dataset_test = read_csv('../nn-manual/test.csv', sep=',', features=True, label=True)
-    dataset_val = read_csv('../nn-manual/validation.csv', sep=',', features=True, label=True)
-    dataset_stor = read_csv('input_prof.csv', sep=',', features=True, label=False)
+    dataset_train = read_csv('../../datasets/train.csv', sep=',', features=True, label=True)
+    dataset_test = read_csv('../../datasets/test.csv', sep=',', features=True, label=True)
+    dataset_val = read_csv('../../datasets/validation.csv', sep=',', features=True, label=True)
+    dataset_stor = read_csv('../../datasets/input_prof.csv', sep=',', features=True, label=False)
+
 
     print("Done reading!")
 
@@ -179,8 +176,13 @@ if __name__ == '__main__':
     print(f"Distribuição no treino: Positivos={train_pos}, Negativos={train_neg}, Ratio={train_pos/len(dataset_train.y):.2f}")
 
     # Criar e treinar o modelo
+    #log_model = LogisticRegression(dataset_train, standardize=True, regularization=True, lamda=0.1, optimization_method= 'gradient_descendent')
     log_model = LogisticRegression(dataset_train, standardize=True, regularization=True, lamda=0.1)
     log_model.buildModel()  
+
+
+    #-----------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------
 
     # Testar o modelo - Accuracy
     test_accuracy = log_model.score(dataset_test)
