@@ -20,10 +20,17 @@ Contém os *notebooks* utilizados para a gerar os conjuntos de dados de treino, 
 ### Pasta `/code`  
 Contém o código dos modelos desenvolvidos, com base no código utilizado nas aulas de AP.  
 
+### Pasta `/rel`  
+Contém os relatório do trabalho assim como os slides utilizados na apresentação.  
+
 ### Pasta `/Submissão1`  
 - Um *notebook* com o código para prever as classes do conjunto de dados fornecido pelo professor.  
 - Ficheiros CSV com as previsões geradas.
 
 ### Pasta `/Submissão2`  
+- Dois *notebooks* com o código para prever as classes do conjunto de dados fornecido pelo professor.  
+- Ficheiros CSV com as previsões geradas.
+
+### Pasta `/Submissão3`  
 - Dois *notebooks* com o código para prever as classes do conjunto de dados fornecido pelo professor.  
 - Ficheiros CSV com as previsões geradas.
